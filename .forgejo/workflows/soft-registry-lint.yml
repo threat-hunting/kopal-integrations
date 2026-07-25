@@ -1,0 +1,38 @@
+# Soft CI for custom registry — plan 12 option B (per-repo). Soft only; no main gate.
+name: Soft registry lint
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  lint-import:
+    name: pyproject + import check
+    runs-on: docker
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify package layout
+        run: |
+          set -euo pipefail
+          test -f pyproject.toml
+          test -d kopal_registry || test -d "$(python3 - <<'PY'
+          import tomllib, pathlib
+          p=pathlib.Path('pyproject.toml')
+          print('ok')
+          PY
+          )"
+          python3 - <<'PY'
+          from pathlib import Path
+          assert Path('pyproject.toml').is_file()
+          pkgs = list(Path('.').glob('**/__init__.py'))
+          assert pkgs, 'no python package __init__.py found'
+          print('LAYOUT_OK', len(pkgs))
+          PY
+      - name: Syntax compileall
+        run: |
+          set -euo pipefail
+          python3 -m compileall -q -f .
+          echo COMPILE_OK
