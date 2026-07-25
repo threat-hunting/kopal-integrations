@@ -1,0 +1,12 @@
+[project]
+name = "kopal_registry"
+version = "0.1.0"
+description = "Securepath Kopal production custom registry"
+requires-python = ">=3.11"
+dependencies = []
+
+[project.optional-dependencies]
+dev = ["tracecat_registry"]
+
+[tool.setuptools.packages.find]
+include = ["kopal_registry*"]
