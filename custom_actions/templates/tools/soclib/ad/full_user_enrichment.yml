@@ -1,0 +1,28 @@
+type: action
+definition:
+  title: "AD: Full user enrichment"
+  description: >
+    Single call to get full user context: profile attributes, account status, and group
+    memberships. User can be identified by sAMAccountName, UPN, DN, or email.
+  display_group: "SOCLib / Active Directory"
+  namespace: tools.soclib.ad
+  name: full_user_enrichment
+  secrets:
+    - name: soclib_active_directory
+      keys: ["AD_URL", "AD_BIND_DN", "AD_BIND_PASSWORD", "AD_BASE_DN"]
+      optional_keys: ["AD_SECURE_CONNECTION", "AD_VALIDATE_SSL", "AD_AUTH_TYPE", "AD_TIMEOUT"]
+  expects:
+    user:
+      type: str
+      description: "User identifier (sAMAccountName, UPN, DN, or email)."
+    identifier_type:
+      type: str
+      description: "How to resolve user: auto, samaccountname, dn, upn, email."
+      default: "auto"
+  steps:
+    - ref: enrich
+      action: integrations.soclib.ad.full_user_enrichment
+      args:
+        user: ${{ inputs.user }}
+        identifier_type: ${{ inputs.identifier_type }}
+  returns: ${{ steps.enrich.result }}

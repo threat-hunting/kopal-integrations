@@ -1,0 +1,46 @@
+type: action
+definition:
+  title: "Telegram: Get updates"
+  description: >
+    JSON array of update types to receive (optional).
+  display_group: "SOCLib / Telegram"
+  namespace: tools.soclib.telegram
+  name: get_updates
+
+  secrets:
+    - name: soclib_telegram
+      keys: ["TELEGRAM_BOT_TOKEN"]
+      optional_keys:
+        - TELEGRAM_DEFAULT_CHAT_ID
+        - TELEGRAM_API_BASE_URL
+        - TELEGRAM_DEFAULT_PARSE_MODE
+        - TELEGRAM_WEBHOOK_SECRET
+
+  expects:
+    offset:
+      type: int | None
+      description: Identifier of the first update to return..
+      default: null
+    limit:
+      type: int | None
+      description: Limits the number of updates (1–100)..
+      default: null
+    timeout:
+      type: int | None
+      description: Long polling timeout in seconds..
+      default: null
+    allowed_updates:
+      type: str | None
+      description: JSON array of update types to receive (optional)..
+      default: null
+
+  steps:
+    - ref: run
+      action: integrations.soclib.telegram.get_updates
+      args:
+        offset: ${{ inputs.offset }}
+        limit: ${{ inputs.limit }}
+        timeout: ${{ inputs.timeout }}
+        allowed_updates: ${{ inputs.allowed_updates }}
+
+  returns: ${{ steps.run.result }}

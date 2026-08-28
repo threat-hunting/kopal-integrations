@@ -1,0 +1,28 @@
+type: action
+definition:
+  title: "WMI: Run query"
+  description: Run an arbitrary WQL (SELECT) query on the target. Only SELECT queries are allowed.
+  display_group: "SOCLib / WMI"
+  namespace: tools.soclib.wmi
+  name: run_query
+  secrets:
+    - name: soclib_wmi
+      keys: ["WMI_SERVER", "WMI_USERNAME", "WMI_PASSWORD"]
+      optional_keys:
+        - WMI_FORCE_NTLMV2
+        - WMI_NAMESPACE
+        - WMI_DOMAIN
+  expects:
+    query:
+      type: str
+      description: "WQL query (SELECT only). Example: SELECT * FROM Win32_Process."
+    ip_hostname: { type: str | None, description: "Optional. Target host. Example: 192.168.1.10.", default: null }
+    namespace: { type: str | None, description: "Optional. WMI namespace. Default root/cimv2.", default: null }
+  steps:
+    - ref: run
+      action: integrations.soclib.wmi.run_query
+      args:
+        query: ${{ inputs.query }}
+        ip_hostname: ${{ inputs.ip_hostname }}
+        namespace: ${{ inputs.namespace }}
+  returns: ${{ steps.run.result }}

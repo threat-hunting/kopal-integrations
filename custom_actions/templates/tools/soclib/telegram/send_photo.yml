@@ -1,0 +1,92 @@
+type: action
+definition:
+  title: "Telegram: Send photo"
+  description: >
+    Send a photo via sendPhoto using a public URL, existing file_id, or base64 upload.
+    Provide exactly one of photo_url, photo_file_id, or photo_base64.
+  display_group: "SOCLib / Telegram"
+  namespace: tools.soclib.telegram
+  name: send_photo
+  doc_url: https://core.telegram.org/bots/api#sendphoto
+
+  secrets:
+    - name: soclib_telegram
+      keys: ["TELEGRAM_BOT_TOKEN"]
+      optional_keys:
+        - TELEGRAM_DEFAULT_CHAT_ID
+        - TELEGRAM_API_BASE_URL
+        - TELEGRAM_DEFAULT_PARSE_MODE
+
+  expects:
+    chat_id:
+      type: str | None
+      description: Target chat. Uses TELEGRAM_DEFAULT_CHAT_ID if omitted.
+      default: null
+    photo_url:
+      type: str | None
+      description: HTTPS URL of the photo.
+      default: null
+    photo_file_id:
+      type: str | None
+      description: Existing Telegram file_id.
+      default: null
+    photo_base64:
+      type: str | None
+      description: Base64-encoded image bytes for upload.
+      default: null
+    photo_filename:
+      type: str | None
+      description: Filename when using photo_base64 (default photo.jpg).
+      default: null
+    caption:
+      type: str | None
+      description: Optional caption (0–1024 chars).
+      default: null
+    parse_mode:
+      type: str | None
+      description: Caption parse mode.
+      default: null
+    disable_notification:
+      type: bool | None
+      description: Send silently when true.
+      default: null
+    has_spoiler:
+      type: bool | None
+      description: Cover photo with spoiler animation.
+      default: null
+    show_caption_above_media:
+      type: bool | None
+      description: Show caption above the photo.
+      default: null
+    message_thread_id:
+      type: int | None
+      description: Forum topic thread id.
+      default: null
+    protect_content:
+      type: bool | None
+      description: Prevent forwarding/saving when true.
+      default: null
+    reply_to_message_id:
+      type: int | None
+      description: Reply to an existing message id.
+      default: null
+
+  steps:
+    - ref: send
+      action: integrations.soclib.telegram.send_photo
+      args:
+        chat_id: ${{ inputs.chat_id }}
+        photo_url: ${{ inputs.photo_url }}
+        photo_file_id: ${{ inputs.photo_file_id }}
+        photo_base64: ${{ inputs.photo_base64 }}
+        photo_filename: ${{ inputs.photo_filename }}
+        caption: ${{ inputs.caption }}
+        parse_mode: ${{ inputs.parse_mode }}
+        disable_notification: ${{ inputs.disable_notification }}
+        has_spoiler: ${{ inputs.has_spoiler }}
+        show_caption_above_media: ${{ inputs.show_caption_above_media }}
+        message_thread_id: ${{ inputs.message_thread_id }}
+        protect_content: ${{ inputs.protect_content }}
+        reply_to_message_id: ${{ inputs.reply_to_message_id }}
+
+  returns: ${{ steps.send.result }}

@@ -1,0 +1,21 @@
+type: action
+definition:
+  title: "WMI: Get BIOS info"
+  description: Get BIOS information (Win32_BIOS).
+  display_group: "SOCLib / WMI"
+  namespace: tools.soclib.wmi
+  name: get_bios_info
+  secrets:
+    - name: soclib_wmi
+      keys: ["WMI_SERVER", "WMI_USERNAME", "WMI_PASSWORD"]
+      optional_keys: [WMI_FORCE_NTLMV2, WMI_NAMESPACE, WMI_DOMAIN]
+  expects:
+    ip_hostname: { type: str | None, default: null }
+    namespace: { type: str | None, default: null }
+  steps:
+    - ref: get
+      action: integrations.soclib.wmi.get_bios_info
+      args:
+        ip_hostname: ${{ inputs.ip_hostname }}
+        namespace: ${{ inputs.namespace }}
+  returns: ${{ steps.get.result }}

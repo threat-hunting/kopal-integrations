@@ -1,0 +1,45 @@
+type: action
+definition:
+  title: "Telegram: Pin chat message"
+  description: >
+    Forum topic thread id.
+  display_group: "SOCLib / Telegram"
+  namespace: tools.soclib.telegram
+  name: pin_chat_message
+
+  secrets:
+    - name: soclib_telegram
+      keys: ["TELEGRAM_BOT_TOKEN"]
+      optional_keys:
+        - TELEGRAM_DEFAULT_CHAT_ID
+        - TELEGRAM_API_BASE_URL
+        - TELEGRAM_DEFAULT_PARSE_MODE
+        - TELEGRAM_WEBHOOK_SECRET
+
+  expects:
+    message_id:
+      type: str
+      description: Message id to pin..
+    chat_id:
+      type: str | None
+      description: Target chat. Uses secret default if omitted..
+      default: null
+    disable_notification:
+      type: bool | None
+      description: Pin silently when true..
+      default: null
+    message_thread_id:
+      type: int | None
+      description: Forum topic thread id..
+      default: null
+
+  steps:
+    - ref: run
+      action: integrations.soclib.telegram.pin_chat_message
+      args:
+        message_id: ${{ inputs.message_id }}
+        chat_id: ${{ inputs.chat_id }}
+        disable_notification: ${{ inputs.disable_notification }}
+        message_thread_id: ${{ inputs.message_thread_id }}
+
+  returns: ${{ steps.run.result }}

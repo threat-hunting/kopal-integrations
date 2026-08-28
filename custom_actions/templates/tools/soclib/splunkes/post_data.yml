@@ -1,0 +1,49 @@
+type: action
+definition:
+  title: "Splunk ES: Post data"
+  description: >
+    Post data to a Splunk index.
+    Creates an event in Splunk with the provided data.
+    Returns success status and metadata.
+  display_group: "SOCLib / Splunk Enterprise Security"
+  namespace: tools.soclib.splunkes
+  name: post_data
+  doc_url: https://docs.splunk.com/Documentation/Splunk/latest/RESTREF/RESTinput#receivers.2Fsimple
+
+  secrets:
+    - name: soclib_splunk_es
+      keys: ["SPLUNK_BASE_URL", "SPLUNK_API_TOKEN"]
+      optional_keys: ["SPLUNK_VERIFY_SSL", "SPLUNK_NAMESPACE_OWNER", "SPLUNK_NAMESPACE_APP"]
+
+  expects:
+    data:
+      type: str
+      description: Data to post to Splunk.
+    index:
+      type: str | None
+      description: Index to send event to (defaults to default index).
+      default: null
+    source:
+      type: str | None
+      description: "Source for the event (default: 'Kopal')."
+      default: null
+    sourcetype:
+      type: str | None
+      description: "Sourcetype for the event (default: 'Automation/Orchestration Platform')."
+      default: null
+    host:
+      type: str | None
+      description: Host for the event.
+      default: null
+
+  steps:
+    - ref: post
+      action: integrations.soclib.splunkes.post_data
+      args:
+        data: ${{ inputs.data }}
+        index: ${{ inputs.index }}
+        source: ${{ inputs.source }}
+        sourcetype: ${{ inputs.sourcetype }}
+        host: ${{ inputs.host }}
+
+  returns: ${{ steps.post.result }}

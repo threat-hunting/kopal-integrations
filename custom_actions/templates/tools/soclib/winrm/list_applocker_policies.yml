@@ -1,0 +1,33 @@
+type: action
+definition:
+  title: "WinRM: List AppLocker policies"
+  description: List AppLocker policies (local). Uses soclib_winrm secret.
+  display_group: "SOCLib / Windows Remote Management"
+  namespace: tools.soclib.winrm
+  name: list_applocker_policies
+
+  secrets:
+    - name: soclib_winrm
+      keys: ["WINRM_ENDPOINT", "WINRM_USERNAME", "WINRM_PASSWORD", "WINRM_TRANSPORT"]
+      optional_keys: ["WINRM_PROTOCOL", "WINRM_PORT", "WINRM_DOMAIN", "WINRM_VERIFY_SSL", "WINRM_CERT_PEM", "WINRM_CERT_KEY_PEM", "WINRM_CA_TRUST"]
+
+  expects:
+    location:
+      type: str
+      default: "local"
+    ldap:
+      type: str | None
+      default: null
+    ip_hostname:
+      type: str | None
+      default: null
+
+  steps:
+    - ref: list
+      action: integrations.soclib.winrm.list_applocker_policies
+      args:
+        location: ${{ inputs.location }}
+        ldap: ${{ inputs.ldap }}
+        ip_hostname: ${{ inputs.ip_hostname }}
+
+  returns: ${{ steps.list.result }}

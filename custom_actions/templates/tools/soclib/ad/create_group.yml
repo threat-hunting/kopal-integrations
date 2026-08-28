@@ -1,0 +1,43 @@
+type: action
+definition:
+  title: "AD: Create group"
+  description: >
+    Create a new group in Active Directory. Provide the full DN where the group should
+    be created and the group name (sAMAccountName). Optionally set group type (security
+    or distribution) and scope (global, domain_local, universal).
+  display_group: "SOCLib / Active Directory"
+  namespace: tools.soclib.ad
+  name: create_group
+  secrets:
+    - name: soclib_active_directory
+      keys: ["AD_URL", "AD_BIND_DN", "AD_BIND_PASSWORD", "AD_BASE_DN"]
+      optional_keys: ["AD_SECURE_CONNECTION", "AD_VALIDATE_SSL", "AD_AUTH_TYPE", "AD_TIMEOUT"]
+  expects:
+    group_dn:
+      type: str
+      description: "Full DN for the new group (container path)."
+    group_name:
+      type: str
+      description: "Group sAMAccountName (logon name)."
+    group_type:
+      type: str
+      description: "Group type: security or distribution."
+      default: "security"
+    group_scope:
+      type: str
+      description: "Group scope: global, domain_local, or universal."
+      default: "global"
+    description:
+      type: str
+      description: "Optional group description."
+      default: null
+  steps:
+    - ref: grp
+      action: integrations.soclib.ad.create_group
+      args:
+        group_dn: ${{ inputs.group_dn }}
+        group_name: ${{ inputs.group_name }}
+        group_type: ${{ inputs.group_type }}
+        group_scope: ${{ inputs.group_scope }}
+        description: ${{ inputs.description }}
+  returns: ${{ steps.grp.result }}

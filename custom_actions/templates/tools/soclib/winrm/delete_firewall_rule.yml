@@ -1,0 +1,25 @@
+type: action
+definition:
+  title: "WinRM: Delete firewall rule"
+  description: Delete a Windows Firewall rule by name. Uses soclib_winrm secret.
+  display_group: "SOCLib / Windows Remote Management"
+  namespace: tools.soclib.winrm
+  name: delete_firewall_rule
+  secrets:
+    - name: soclib_winrm
+      keys: ["WINRM_ENDPOINT", "WINRM_USERNAME", "WINRM_PASSWORD", "WINRM_TRANSPORT"]
+      optional_keys: ["WINRM_PROTOCOL", "WINRM_PORT", "WINRM_DOMAIN", "WINRM_VERIFY_SSL", "WINRM_CERT_PEM", "WINRM_CERT_KEY_PEM", "WINRM_CA_TRUST"]
+  expects:
+    name: { type: str, description: "Rule name to delete (display name or internal name)." }
+    dir: { type: str | None, default: null }
+    use_internal_name: { type: bool, description: "If true, match by internal -Name; if false, by -DisplayName.", default: false }
+    ip_hostname: { type: str | None, default: null }
+  steps:
+    - ref: del
+      action: integrations.soclib.winrm.delete_firewall_rule
+      args:
+        name: ${{ inputs.name }}
+        dir: ${{ inputs.dir }}
+        use_internal_name: ${{ inputs.use_internal_name }}
+        ip_hostname: ${{ inputs.ip_hostname }}
+  returns: ${{ steps.del.result }}

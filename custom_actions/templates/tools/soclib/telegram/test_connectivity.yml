@@ -1,0 +1,32 @@
+type: action
+definition:
+  title: "Telegram: Test connectivity"
+  description: >
+    Verify Telegram Bot token via getMe. Returns bot id, username, and connection info.
+    Optionally includes webhook summary when include_webhook_info is true.
+  display_group: "SOCLib / Telegram"
+  namespace: tools.soclib.telegram
+  name: test_connectivity
+  doc_url: https://core.telegram.org/bots/api#getme
+
+  secrets:
+    - name: soclib_telegram
+      keys: ["TELEGRAM_BOT_TOKEN"]
+      optional_keys:
+        - TELEGRAM_DEFAULT_CHAT_ID
+        - TELEGRAM_API_BASE_URL
+        - TELEGRAM_DEFAULT_PARSE_MODE
+
+  expects:
+    include_webhook_info:
+      type: bool
+      description: Also call getWebhookInfo and include webhook summary.
+      default: false
+
+  steps:
+    - ref: test
+      action: integrations.soclib.telegram.test_connectivity
+      args:
+        include_webhook_info: ${{ inputs.include_webhook_info }}
+
+  returns: ${{ steps.test.result }}

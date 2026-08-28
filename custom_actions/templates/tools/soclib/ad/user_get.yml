@@ -1,0 +1,31 @@
+type: action
+definition:
+  title: "AD: Get user (LDAP)"
+  description: >
+    Lookup a single Active Directory user and return common attributes. Identifies the user
+    by sAMAccountName or UPN. Use username_attr to match against a different LDAP attribute.
+  display_group: "SOCLib / Active Directory"
+  namespace: tools.soclib.ad
+  name: user_get
+
+  secrets:
+    - name: soclib_active_directory
+      keys: ["AD_URL", "AD_BIND_DN", "AD_BIND_PASSWORD", "AD_BASE_DN"]
+      optional_keys: ["AD_SECURE_CONNECTION", "AD_VALIDATE_SSL", "AD_AUTH_TYPE", "AD_TIMEOUT"]
+
+  expects:
+    username:
+      type: str
+      description: "User identifier: sAMAccountName or UPN."
+    username_attr:
+      type: str
+      description: "LDAP attribute used to match the username (e.g. sAMAccountName, userPrincipalName)."
+      default: "sAMAccountName"
+  steps:
+    - ref: get
+      action: integrations.soclib.ad.user_get
+      args:
+        username: ${{ inputs.username }}
+        username_attr: ${{ inputs.username_attr }}
+
+  returns: ${{ steps.get.result }}

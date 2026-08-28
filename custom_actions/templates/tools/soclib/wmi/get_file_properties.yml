@@ -1,0 +1,25 @@
+type: action
+definition:
+  title: "WMI: Get file properties"
+  description: Get file properties (CIM_DataFile) by path on target. Path must be Windows path or UNC.
+  display_group: "SOCLib / WMI"
+  namespace: tools.soclib.wmi
+  name: get_file_properties
+  secrets:
+    - name: soclib_wmi
+      keys: ["WMI_SERVER", "WMI_USERNAME", "WMI_PASSWORD"]
+      optional_keys: [WMI_FORCE_NTLMV2, WMI_NAMESPACE, WMI_DOMAIN]
+  expects:
+    path:
+      type: str
+      description: "Full path to file on target. Example: C:\\Windows\\System32\\kernel32.dll."
+    ip_hostname: { type: str | None, default: null }
+    namespace: { type: str | None, default: null }
+  steps:
+    - ref: get
+      action: integrations.soclib.wmi.get_file_properties
+      args:
+        path: ${{ inputs.path }}
+        ip_hostname: ${{ inputs.ip_hostname }}
+        namespace: ${{ inputs.namespace }}
+  returns: ${{ steps.get.result }}

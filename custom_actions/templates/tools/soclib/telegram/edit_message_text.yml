@@ -1,0 +1,60 @@
+type: action
+definition:
+  title: "Telegram: Edit message text"
+  description: >
+    JSON InlineKeyboardMarkup (optional).
+  display_group: "SOCLib / Telegram"
+  namespace: tools.soclib.telegram
+  name: edit_message_text
+
+  secrets:
+    - name: soclib_telegram
+      keys: ["TELEGRAM_BOT_TOKEN"]
+      optional_keys:
+        - TELEGRAM_DEFAULT_CHAT_ID
+        - TELEGRAM_API_BASE_URL
+        - TELEGRAM_DEFAULT_PARSE_MODE
+        - TELEGRAM_WEBHOOK_SECRET
+
+  expects:
+    text:
+      type: str
+      description: New message text (1–4096 characters)..
+    chat_id:
+      type: str | None
+      description: Target chat. Required unless inline_message_id is set..
+      default: null
+    message_id:
+      type: int | None
+      description: Message id to edit in chat..
+      default: null
+    inline_message_id:
+      type: str | None
+      description: Inline message id (alternative to chat_id + message_id)..
+      default: null
+    parse_mode:
+      type: str | None
+      description: HTML, MarkdownV2, or Markdown..
+      default: null
+    disable_web_page_preview:
+      type: bool | None
+      description: Disable link preview..
+      default: null
+    reply_markup:
+      type: str | None
+      description: JSON InlineKeyboardMarkup (optional)..
+      default: null
+
+  steps:
+    - ref: run
+      action: integrations.soclib.telegram.edit_message_text
+      args:
+        text: ${{ inputs.text }}
+        chat_id: ${{ inputs.chat_id }}
+        message_id: ${{ inputs.message_id }}
+        inline_message_id: ${{ inputs.inline_message_id }}
+        parse_mode: ${{ inputs.parse_mode }}
+        disable_web_page_preview: ${{ inputs.disable_web_page_preview }}
+        reply_markup: ${{ inputs.reply_markup }}
+
+  returns: ${{ steps.run.result }}

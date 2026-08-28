@@ -1,0 +1,24 @@
+type: action
+definition:
+  title: "WinRM: List sessions"
+  description: List user sessions on the target. Uses soclib_winrm secret.
+  display_group: "SOCLib / Windows Remote Management"
+  namespace: tools.soclib.winrm
+  name: list_sessions
+
+  secrets:
+    - name: soclib_winrm
+      keys: ["WINRM_ENDPOINT", "WINRM_USERNAME", "WINRM_PASSWORD", "WINRM_TRANSPORT"]
+      optional_keys: ["WINRM_PROTOCOL", "WINRM_PORT", "WINRM_DOMAIN", "WINRM_VERIFY_SSL", "WINRM_CERT_PEM", "WINRM_CERT_KEY_PEM", "WINRM_CA_TRUST"]
+
+  expects:
+    ip_hostname: { type: str | None, default: null }
+    max_count: { type: int | None, description: "Max number of sessions to return.", default: null }
+  steps:
+    - ref: list
+      action: integrations.soclib.winrm.list_sessions
+      args:
+        ip_hostname: ${{ inputs.ip_hostname }}
+        max_count: ${{ inputs.max_count }}
+
+  returns: ${{ steps.list.result }}

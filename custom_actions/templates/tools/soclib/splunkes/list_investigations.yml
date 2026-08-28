@@ -1,0 +1,95 @@
+type: action
+definition:
+  title: "Splunk ES: List investigations"
+  description: >
+    Retrieve investigations from Splunk ES with filtering and pagination.
+    Supports filtering by status, urgency, owner, disposition, sensitivity, time range, and more.
+    Returns a list of investigations matching the criteria.
+  display_group: "SOCLib / Splunk Enterprise Security"
+  namespace: tools.soclib.splunkes
+  name: list_investigations
+  doc_url: https://help.splunk.com/en/splunk-enterprise-security-8/api-reference/8.4/splunk-enterprise-security-api-reference/investigation/public_v2_list_investigations
+
+  secrets:
+    - name: soclib_splunk_es
+      keys: ["SPLUNK_BASE_URL", "SPLUNK_API_TOKEN"]
+      optional_keys: ["SPLUNK_VERIFY_SSL", "SPLUNK_NAMESPACE_OWNER", "SPLUNK_NAMESPACE_APP"]
+
+  expects:
+    limit:
+      type: int
+      description: "Maximum number of investigations to return (max: 100). Default: 20."
+      default: 20
+    offset:
+      type: int
+      description: "Starting point for pagination. Default: 0."
+      default: 0
+    ids:
+      type: str | None
+      description: Comma-separated list of investigation IDs (GUID) or display_ids (e.g., '123,ES-001,332123').
+      default: null
+    status:
+      type: str | None
+      description: Filter by status ID or label (e.g., 'New', '1').
+      default: null
+    urgency:
+      type: str | None
+      description: "Filter by urgency: 'informational', 'low', 'medium', 'high', 'critical', 'unknown'."
+      default: null
+    sensitivity:
+      type: str | None
+      description: "Filter by sensitivity: 'White', 'Green', 'Amber', 'Red', 'Unassigned'."
+      default: null
+    owner:
+      type: str | None
+      description: Filter by owner username.
+      default: null
+    disposition:
+      type: str | None
+      description: "Filter by disposition ID or label (e.g., 'disposition:1', 'Undetermined')."
+      default: null
+    sort:
+      type: str | None
+      description: "Sort order (e.g., 'create_time:desc', 'status:asc'). Multiple fields separated by comma. Default: 'create_time:desc'."
+      default: null
+    create_time_min:
+      type: float | None
+      description: Minimum creation time (Unix epoch timestamp).
+      default: null
+    create_time_max:
+      type: float | None
+      description: Maximum creation time (Unix epoch timestamp).
+      default: null
+    update_time_min:
+      type: float | None
+      description: Minimum update time (Unix epoch timestamp).
+      default: null
+    update_time_max:
+      type: float | None
+      description: Maximum update time (Unix epoch timestamp).
+      default: null
+    search_format:
+      type: bool | None
+      description: If true, response will be formatted for use in Splunk search with 'rest' command.
+      default: null
+
+  steps:
+    - ref: list
+      action: integrations.soclib.splunkes.list_investigations
+      args:
+        limit: ${{ inputs.limit }}
+        offset: ${{ inputs.offset }}
+        ids: ${{ inputs.ids }}
+        status: ${{ inputs.status }}
+        urgency: ${{ inputs.urgency }}
+        sensitivity: ${{ inputs.sensitivity }}
+        owner: ${{ inputs.owner }}
+        disposition: ${{ inputs.disposition }}
+        sort: ${{ inputs.sort }}
+        create_time_min: ${{ inputs.create_time_min }}
+        create_time_max: ${{ inputs.create_time_max }}
+        update_time_min: ${{ inputs.update_time_min }}
+        update_time_max: ${{ inputs.update_time_max }}
+        search_format: ${{ inputs.search_format }}
+
+  returns: ${{ steps.list.result }}

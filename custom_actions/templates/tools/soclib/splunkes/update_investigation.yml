@@ -1,0 +1,64 @@
+type: action
+definition:
+  title: "Splunk ES: Update investigation"
+  description: >
+    Update an existing investigation in Splunk ES.
+    Supports updating name, description, status, urgency, sensitivity, owner, investigation_type, and other fields.
+    Returns the updated investigation.
+  display_group: "SOCLib / Splunk Enterprise Security"
+  namespace: tools.soclib.splunkes
+  name: update_investigation
+  doc_url: https://help.splunk.com/en/splunk-enterprise-security-8/api-reference/8.4/splunk-enterprise-security-api-reference/investigation/public_v2_update_investigation
+
+  secrets:
+    - name: soclib_splunk_es
+      keys: ["SPLUNK_BASE_URL", "SPLUNK_API_TOKEN"]
+      optional_keys: ["SPLUNK_VERIFY_SSL", "SPLUNK_NAMESPACE_OWNER", "SPLUNK_NAMESPACE_APP"]
+
+  expects:
+    id:
+      type: str
+      description: Investigation ID (GUID) or display_id (e.g., 'ES-00001').
+    name:
+      type: str | None
+      description: New investigation name.
+      default: null
+    description:
+      type: str | None
+      description: New investigation description.
+      default: null
+    status:
+      type: str | None
+      description: New status ID or label.
+      default: null
+    urgency:
+      type: str | None
+      description: "New urgency: 'informational', 'low', 'medium', 'high', 'critical', 'unknown'."
+      default: null
+    sensitivity:
+      type: str | None
+      description: "New sensitivity: 'White', 'Green', 'Amber', 'Red', 'Unassigned'."
+      default: null
+    owner:
+      type: str | None
+      description: New owner username.
+      default: null
+    investigation_type:
+      type: str | None
+      description: New investigation type (e.g., 'threat investigation', 'default').
+      default: null
+
+  steps:
+    - ref: update
+      action: integrations.soclib.splunkes.update_investigation
+      args:
+        id: ${{ inputs.id }}
+        name: ${{ inputs.name }}
+        description: ${{ inputs.description }}
+        status: ${{ inputs.status }}
+        urgency: ${{ inputs.urgency }}
+        sensitivity: ${{ inputs.sensitivity }}
+        owner: ${{ inputs.owner }}
+        investigation_type: ${{ inputs.investigation_type }}
+
+  returns: ${{ steps.update.result }}

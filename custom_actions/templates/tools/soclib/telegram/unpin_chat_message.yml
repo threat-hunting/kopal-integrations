@@ -1,0 +1,41 @@
+type: action
+definition:
+  title: "Telegram: Unpin chat message"
+  description: >
+    Forum topic thread id.
+  display_group: "SOCLib / Telegram"
+  namespace: tools.soclib.telegram
+  name: unpin_chat_message
+
+  secrets:
+    - name: soclib_telegram
+      keys: ["TELEGRAM_BOT_TOKEN"]
+      optional_keys:
+        - TELEGRAM_DEFAULT_CHAT_ID
+        - TELEGRAM_API_BASE_URL
+        - TELEGRAM_DEFAULT_PARSE_MODE
+        - TELEGRAM_WEBHOOK_SECRET
+
+  expects:
+    chat_id:
+      type: str | None
+      description: Target chat. Uses secret default if omitted..
+      default: null
+    message_id:
+      type: int | None
+      description: Message id to unpin. Omit to unpin all pinned messages..
+      default: null
+    message_thread_id:
+      type: int | None
+      description: Forum topic thread id..
+      default: null
+
+  steps:
+    - ref: run
+      action: integrations.soclib.telegram.unpin_chat_message
+      args:
+        chat_id: ${{ inputs.chat_id }}
+        message_id: ${{ inputs.message_id }}
+        message_thread_id: ${{ inputs.message_thread_id }}
+
+  returns: ${{ steps.run.result }}

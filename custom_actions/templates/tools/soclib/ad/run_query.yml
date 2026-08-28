@@ -1,0 +1,57 @@
+type: action
+definition:
+  title: "AD: Run query"
+  description: >
+    Run an arbitrary LDAP search against Active Directory. Provide an LDAP filter and
+    optional search base, attributes, and paging. Use attribute_preset for predefined
+    attribute sets. Requires secret soclib_active_directory.
+  display_group: "SOCLib / Active Directory"
+  namespace: tools.soclib.ad
+  name: run_query
+
+  secrets:
+    - name: soclib_active_directory
+      keys: ["AD_URL", "AD_BIND_DN", "AD_BIND_PASSWORD", "AD_BASE_DN"]
+      optional_keys: ["AD_SECURE_CONNECTION", "AD_VALIDATE_SSL", "AD_AUTH_TYPE", "AD_TIMEOUT"]
+
+  expects:
+    filter:
+      type: str
+      description: "LDAP filter expression."
+    search_base:
+      type: str | None
+      description: "Search base DN; uses AD_BASE_DN from secret if empty."
+      default: null
+    attributes:
+      type: str
+      description: "Semicolon-separated attribute names to return."
+      default: "sAMAccountName"
+    attribute_preset:
+      type: str
+      description: "Preset attributes: basic, security, detailed, or all (overrides attributes)."
+      default: null
+    size_limit:
+      type: int
+      description: "Maximum number of results (0 = unlimited)."
+      default: 0
+    page_size:
+      type: int
+      description: "Page size for paged search (0 = no paging)."
+      default: 1000
+    search_scope:
+      type: str
+      description: "Search scope: SUBTREE, BASE, or LEVEL."
+      default: "SUBTREE"
+  steps:
+    - ref: query
+      action: integrations.soclib.ad.run_query
+      args:
+        filter: ${{ inputs.filter }}
+        search_base: ${{ inputs.search_base }}
+        attributes: ${{ inputs.attributes }}
+        attribute_preset: ${{ inputs.attribute_preset }}
+        size_limit: ${{ inputs.size_limit }}
+        page_size: ${{ inputs.page_size }}
+        search_scope: ${{ inputs.search_scope }}
+
+  returns: ${{ steps.query.result }}

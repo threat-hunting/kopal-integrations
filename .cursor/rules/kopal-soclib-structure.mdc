@@ -1,0 +1,78 @@
+---
+description: ساختار و نام‌گذاری integration/action برای Kopal با برند SOCLib
+globs: custom_actions/**/*.py,custom_actions/**/*.yml
+alwaysApply: false
+---
+
+# ساختار و استاندارد SOCLib – Kopal
+
+هنگام کار روی `custom_actions` (Python UDF یا قالب YAML) این قوانین را رعایت کن.
+
+## الگوی دو Namespace (الزامی)
+
+در Kopal، Template و UDF **نباید** namespace+name یکسان داشته باشند. الگو:
+
+| لایه | Namespace | نقش |
+|-------|-----------|------|
+| **UDF (Python)** | `integrations.soclib.<integration>` | موتور اجرا |
+| **Template (YAML)** | `tools.soclib.<integration>` | رابط کاربری |
+
+Template در `steps.action` باید UDF را از namespace **integrations** صدا بزند.
+
+## پیشوند برند و نام‌گذاری
+
+- **display_group:** `"SOCLib / <نام ابزار>"` (مثال: `"SOCLib / Active Directory"`).
+- نام اکشن: **lower snake case**.
+
+## Python UDF
+
+- در `@registry.register` حتماً `namespace="integrations.soclib.<integration>"`.
+- یک ماژول به ازای هر ابزار.
+
+```python
+ACTION_NAMESPACE = "integrations.soclib.ad"
+
+@registry.register(
+    display_group="SOCLib / Active Directory",
+    namespace=ACTION_NAMESPACE,  # integrations.soclib.ad
+    ...
+)
+def user_get(...): ...
+```
+
+## Action Template (YAML)
+
+- مسیر فایل: `custom_actions/templates/tools/soclib/<integration>/<action_name>.yml`
+- در تعریف: `namespace: tools.soclib.<integration>`, `name: <action_name>`.
+- در steps: `action: integrations.soclib.<integration>.<function_name>` (UDF namespace).
+
+```yaml
+# مسیر: custom_actions/templates/tools/soclib/ad/user_get.yml
+definition:
+  namespace: tools.soclib.ad           # Template namespace
+  name: user_get
+  display_group: "SOCLib / Active Directory"
+  steps:
+    - ref: get
+      action: integrations.soclib.ad.user_get  # UDF namespace
+      args: ...
+```
+
+## ساختار پوشه قالب‌ها (الزامی)
+
+```
+custom_actions/templates/
+  tools/
+    soclib/
+      ad/
+        user_get.yml
+        test_connectivity.yml
+      splunk/
+        search_events.yml
+```
+
+قرار دادن همهٔ قالب‌ها در یک پوشهٔ تخت ممنوع است.
+
+## مرجع کامل
+
+مستندات تفصیلی: پوشهٔ **doc** خارج از ریپو (`../doc/CONVENTIONS.md`) و kopal-registry-org-for-sample. برای Workflow و Expression با مستندات رسمی Kopal هماهنگ باش: [Expressions](https://docs.kopal.com/quickstart/expressions), [Control flow](https://docs.kopal.com/quickstart/control-flow), [JSONPath](https://docs.kopal.com/cheatsheets/jsonpath); خلاصهٔ لینک‌ها و UI: `../doc/reference/kopal-docs-links.md`.

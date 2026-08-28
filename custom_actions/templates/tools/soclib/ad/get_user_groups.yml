@@ -1,0 +1,33 @@
+type: action
+definition:
+  title: "AD: Get user groups"
+  description: >
+    List all groups a user is a member of, with details. Use recursive true to include
+    nested group memberships. User can be identified by sAMAccountName, UPN, DN, or email.
+  display_group: "SOCLib / Active Directory"
+  namespace: tools.soclib.ad
+  name: get_user_groups
+  secrets:
+    - name: soclib_active_directory
+      keys: ["AD_URL", "AD_BIND_DN", "AD_BIND_PASSWORD", "AD_BASE_DN"]
+      optional_keys: ["AD_SECURE_CONNECTION", "AD_VALIDATE_SSL", "AD_AUTH_TYPE", "AD_TIMEOUT"]
+  expects:
+    user:
+      type: str
+      description: "User identifier (sAMAccountName, UPN, DN, or email)."
+    identifier_type:
+      type: str
+      description: "How to resolve user: auto, samaccountname, dn, upn, email."
+      default: "auto"
+    recursive:
+      type: bool
+      description: "Include nested group memberships."
+      default: false
+  steps:
+    - ref: groups
+      action: integrations.soclib.ad.get_user_groups
+      args:
+        user: ${{ inputs.user }}
+        identifier_type: ${{ inputs.identifier_type }}
+        recursive: ${{ inputs.recursive }}
+  returns: ${{ steps.groups.result }}

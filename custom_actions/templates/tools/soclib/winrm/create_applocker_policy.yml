@@ -1,0 +1,29 @@
+type: action
+definition:
+  title: "WinRM: Create AppLocker policy (block file path)"
+  description: Create an AppLocker rule to deny or allow a file path. Uses soclib_winrm secret.
+  display_group: "SOCLib / Windows Remote Management"
+  namespace: tools.soclib.winrm
+  name: create_applocker_policy
+  secrets:
+    - name: soclib_winrm
+      keys: ["WINRM_ENDPOINT", "WINRM_USERNAME", "WINRM_PASSWORD", "WINRM_TRANSPORT"]
+      optional_keys: ["WINRM_PROTOCOL", "WINRM_PORT", "WINRM_DOMAIN", "WINRM_VERIFY_SSL", "WINRM_CERT_PEM", "WINRM_CERT_KEY_PEM", "WINRM_CA_TRUST"]
+  expects:
+    deny_allow: { type: str }
+    file_path: { type: str }
+    user: { type: str | None, default: null }
+    rule_name_prefix: { type: str | None, default: null }
+    ldap: { type: str | None, default: null }
+    ip_hostname: { type: str | None, default: null }
+  steps:
+    - ref: create
+      action: integrations.soclib.winrm.create_applocker_policy
+      args:
+        deny_allow: ${{ inputs.deny_allow }}
+        file_path: ${{ inputs.file_path }}
+        user: ${{ inputs.user }}
+        rule_name_prefix: ${{ inputs.rule_name_prefix }}
+        ldap: ${{ inputs.ldap }}
+        ip_hostname: ${{ inputs.ip_hostname }}
+  returns: ${{ steps.create.result }}

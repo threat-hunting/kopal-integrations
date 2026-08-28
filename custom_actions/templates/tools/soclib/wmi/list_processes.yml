@@ -1,0 +1,32 @@
+type: action
+definition:
+  title: "WMI: List processes"
+  description: List running processes (Win32_Process). Optional max_count and name_filter.
+  display_group: "SOCLib / WMI"
+  namespace: tools.soclib.wmi
+  name: list_processes
+  secrets:
+    - name: soclib_wmi
+      keys: ["WMI_SERVER", "WMI_USERNAME", "WMI_PASSWORD"]
+      optional_keys:
+        - WMI_FORCE_NTLMV2
+        - WMI_NAMESPACE
+        - WMI_DOMAIN
+  expects:
+    ip_hostname: { type: str | None, description: "Optional. Target host. Example: 192.168.1.10.", default: null }
+    namespace: { type: str | None, description: "Optional. WMI namespace. Default root/cimv2.", default: null }
+    max_count: { type: int | None, description: "Optional. Maximum number of processes to return. Summary includes total_available if set.", default: null }
+    name_filter: { type: str | None, description: "Optional. Substring filter on process Name (case-insensitive).", default: null }
+    filter_key: { type: str | None, description: "Optional. WMI property name to filter by (exact match). Use with filter_value.", default: null }
+    filter_value: { type: str | None, description: "Optional. Value for filter_key (exact match). Use with filter_key.", default: null }
+  steps:
+    - ref: list
+      action: integrations.soclib.wmi.list_processes
+      args:
+        ip_hostname: ${{ inputs.ip_hostname }}
+        namespace: ${{ inputs.namespace }}
+        max_count: ${{ inputs.max_count }}
+        name_filter: ${{ inputs.name_filter }}
+        filter_key: ${{ inputs.filter_key }}
+        filter_value: ${{ inputs.filter_value }}
+  returns: ${{ steps.list.result }}

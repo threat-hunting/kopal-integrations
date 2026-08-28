@@ -1,0 +1,23 @@
+type: action
+definition:
+  title: "WinRM: Delete file"
+  description: Delete a file on the target. Uses soclib_winrm secret.
+  display_group: "SOCLib / Windows Remote Management"
+  namespace: tools.soclib.winrm
+  name: delete_file
+  secrets:
+    - name: soclib_winrm
+      keys: ["WINRM_ENDPOINT", "WINRM_USERNAME", "WINRM_PASSWORD", "WINRM_TRANSPORT"]
+      optional_keys: ["WINRM_PROTOCOL", "WINRM_PORT", "WINRM_DOMAIN", "WINRM_VERIFY_SSL", "WINRM_CERT_PEM", "WINRM_CERT_KEY_PEM", "WINRM_CA_TRUST"]
+  expects:
+    file_path: { type: str }
+    force: { type: bool, default: false }
+    ip_hostname: { type: str | None, default: null }
+  steps:
+    - ref: del
+      action: integrations.soclib.winrm.delete_file
+      args:
+        file_path: ${{ inputs.file_path }}
+        force: ${{ inputs.force }}
+        ip_hostname: ${{ inputs.ip_hostname }}
+  returns: ${{ steps.del.result }}

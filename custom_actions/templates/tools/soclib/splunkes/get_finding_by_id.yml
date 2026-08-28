@@ -1,0 +1,28 @@
+type: action
+definition:
+  title: "Splunk ES: Get finding by ID"
+  description: >
+    Retrieve a specific finding by its ID from Splunk ES.
+    Returns the finding details.
+  display_group: "SOCLib / Splunk Enterprise Security"
+  namespace: tools.soclib.splunkes
+  name: get_finding_by_id
+  doc_url: https://help.splunk.com/en/splunk-enterprise-security-8/api-reference/8.4/splunk-enterprise-security-api-reference/findings/public_v2_get_finding_by_id
+
+  secrets:
+    - name: soclib_splunk_es
+      keys: ["SPLUNK_BASE_URL", "SPLUNK_API_TOKEN"]
+      optional_keys: ["SPLUNK_VERIFY_SSL", "SPLUNK_NAMESPACE_OWNER", "SPLUNK_NAMESPACE_APP"]
+
+  expects:
+    id:
+      type: str
+      description: Finding ID.
+
+  steps:
+    - ref: get
+      action: integrations.soclib.splunkes.get_finding_by_id
+      args:
+        id: ${{ inputs.id }}
+
+  returns: ${{ steps.get.result }}

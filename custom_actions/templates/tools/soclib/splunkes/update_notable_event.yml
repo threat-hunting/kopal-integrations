@@ -1,0 +1,54 @@
+type: action
+definition:
+  title: "Splunk ES: Update notable event"
+  description: >
+    Update a notable event in Splunk ES. Supports updating status, disposition,
+    urgency, comment, and owner. Works with event_id or SID+RID combo.
+    At least one update field must be provided.
+  display_group: "SOCLib / Splunk Enterprise Security"
+  namespace: tools.soclib.splunkes
+  name: update_notable_event
+  doc_url: https://docs.splunk.com/Documentation/Splunk/latest/RESTREF/RESTsearch#search.2Fjobs
+
+  secrets:
+    - name: soclib_splunk_es
+      keys: ["SPLUNK_BASE_URL", "SPLUNK_API_TOKEN"]
+      optional_keys: ["SPLUNK_VERIFY_SSL", "SPLUNK_NAMESPACE_OWNER", "SPLUNK_NAMESPACE_APP"]
+
+  expects:
+    event_id:
+      type: str
+      description: Event ID or SID+RID combo (e.g., '1234567890.123+0').
+    status:
+      type: str | None
+      description: New status (e.g., 'new', 'in progress', 'resolved', 'closed').
+      default: null
+    disposition:
+      type: str | None
+      description: New disposition (e.g., 'True Positive', 'False Positive').
+      default: null
+    urgency:
+      type: str | None
+      description: "New urgency: 'informational', 'low', 'medium', 'high', 'critical'."
+      default: null
+    comment:
+      type: str | None
+      description: Comment to add to the event.
+      default: null
+    owner:
+      type: str | None
+      description: New owner username.
+      default: null
+
+  steps:
+    - ref: update
+      action: integrations.soclib.splunkes.update_notable_event
+      args:
+        event_id: ${{ inputs.event_id }}
+        status: ${{ inputs.status }}
+        disposition: ${{ inputs.disposition }}
+        urgency: ${{ inputs.urgency }}
+        comment: ${{ inputs.comment }}
+        owner: ${{ inputs.owner }}
+
+  returns: ${{ steps.update.result }}

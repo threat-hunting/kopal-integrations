@@ -1,0 +1,115 @@
+type: action
+definition:
+  title: "Splunk ES: Get findings"
+  description: >
+    Retrieve findings from Splunk ES with filtering and pagination.
+    Supports filtering by finding_ids, investigation_id, status, urgency, owner, disposition, rule_title, and time range.
+    Returns a list of findings matching the criteria.
+  display_group: "SOCLib / Splunk Enterprise Security"
+  namespace: tools.soclib.splunkes
+  name: get_findings
+  doc_url: https://help.splunk.com/en/splunk-enterprise-security-8/api-reference/8.4/splunk-enterprise-security-api-reference/findings/public_v2_get_findings
+
+  secrets:
+    - name: soclib_splunk_es
+      keys: ["SPLUNK_BASE_URL", "SPLUNK_API_TOKEN"]
+      optional_keys: ["SPLUNK_VERIFY_SSL", "SPLUNK_NAMESPACE_OWNER", "SPLUNK_NAMESPACE_APP"]
+
+  expects:
+    limit:
+      type: int
+      description: "Maximum number of findings to return (max: 100). Default: 20."
+      default: 20
+    offset:
+      type: int
+      description: "Starting point for pagination. Default: 0."
+      default: 0
+    finding_ids:
+      type: str | None
+      description: Comma-separated list of finding IDs (event_ids).
+      default: null
+    investigation_id:
+      type: str | None
+      description: Filter by investigation ID.
+      default: null
+    status:
+      type: str | None
+      description: Filter by status (e.g., 'In Progress').
+      default: null
+    urgency:
+      type: str | None
+      description: "Filter by urgency: 'informational', 'low', 'medium', 'high', 'critical', 'unknown'."
+      default: null
+    owner:
+      type: str | None
+      description: Filter by owner username.
+      default: null
+    disposition:
+      type: str | None
+      description: Filter by disposition (e.g., 'True Positive - Suspicious Activity').
+      default: null
+    sort:
+      type: str | None
+      description: "Sort order (e.g., 'create_time:desc'). Multiple fields separated by comma."
+      default: null
+    fields:
+      type: str | None
+      description: Comma-separated list of fields to return (e.g., 'rule_title,event_id,status,urgency'). Only specified fields will be returned.
+      default: null
+    earliest:
+      type: str | None
+      description: Earliest time for findings (relative time like '-30m', epoch time, or ISO 8601).
+      default: null
+    latest:
+      type: str | None
+      description: "Latest time for findings (relative time like '-30m', epoch time, or ISO 8601). Default: now."
+      default: null
+    rule_title:
+      type: str | None
+      description: Filter by rule title/description.
+      default: null
+    create_time_min:
+      type: float | None
+      description: Minimum creation time (Unix epoch timestamp).
+      default: null
+    create_time_max:
+      type: float | None
+      description: Maximum creation time (Unix epoch timestamp).
+      default: null
+    update_time_min:
+      type: float | None
+      description: Minimum update time (Unix epoch timestamp).
+      default: null
+    update_time_max:
+      type: float | None
+      description: Maximum update time (Unix epoch timestamp).
+      default: null
+    search_format:
+      type: bool | None
+      description: If true, response will be formatted for use in Splunk search with 'rest' command.
+      default: null
+
+  steps:
+    - ref: get
+      action: integrations.soclib.splunkes.get_findings
+      args:
+        limit: ${{ inputs.limit }}
+        offset: ${{ inputs.offset }}
+        finding_ids: ${{ inputs.finding_ids }}
+        investigation_id: ${{ inputs.investigation_id }}
+        status: ${{ inputs.status }}
+        urgency: ${{ inputs.urgency }}
+        owner: ${{ inputs.owner }}
+        disposition: ${{ inputs.disposition }}
+        sort: ${{ inputs.sort }}
+        fields: ${{ inputs.fields }}
+        earliest: ${{ inputs.earliest }}
+        latest: ${{ inputs.latest }}
+        rule_title: ${{ inputs.rule_title }}
+        create_time_min: ${{ inputs.create_time_min }}
+        create_time_max: ${{ inputs.create_time_max }}
+        update_time_min: ${{ inputs.update_time_min }}
+        update_time_max: ${{ inputs.update_time_max }}
+        search_format: ${{ inputs.search_format }}
+
+  returns: ${{ steps.get.result }}

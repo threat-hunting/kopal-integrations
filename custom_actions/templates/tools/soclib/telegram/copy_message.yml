@@ -1,0 +1,69 @@
+type: action
+definition:
+  title: "Telegram: Copy message"
+  description: >
+    Reply to an existing message id.
+  display_group: "SOCLib / Telegram"
+  namespace: tools.soclib.telegram
+  name: copy_message
+
+  secrets:
+    - name: soclib_telegram
+      keys: ["TELEGRAM_BOT_TOKEN"]
+      optional_keys:
+        - TELEGRAM_DEFAULT_CHAT_ID
+        - TELEGRAM_API_BASE_URL
+        - TELEGRAM_DEFAULT_PARSE_MODE
+        - TELEGRAM_WEBHOOK_SECRET
+
+  expects:
+    from_chat_id:
+      type: str
+      description: Source chat id or @username..
+    message_id:
+      type: str
+      description: Message id in the source chat..
+    chat_id:
+      type: str | None
+      description: Destination chat. Uses secret default if omitted..
+      default: null
+    caption:
+      type: str | None
+      description: New caption (optional)..
+      default: null
+    parse_mode:
+      type: str | None
+      description: Caption parse mode..
+      default: null
+    disable_notification:
+      type: bool | None
+      description: Copy silently when true..
+      default: null
+    message_thread_id:
+      type: int | None
+      description: Forum topic thread id..
+      default: null
+    protect_content:
+      type: bool | None
+      description: Prevent forwarding/saving when true..
+      default: null
+    reply_to_message_id:
+      type: int | None
+      description: Reply to an existing message id..
+      default: null
+
+  steps:
+    - ref: run
+      action: integrations.soclib.telegram.copy_message
+      args:
+        from_chat_id: ${{ inputs.from_chat_id }}
+        message_id: ${{ inputs.message_id }}
+        chat_id: ${{ inputs.chat_id }}
+        caption: ${{ inputs.caption }}
+        parse_mode: ${{ inputs.parse_mode }}
+        disable_notification: ${{ inputs.disable_notification }}
+        message_thread_id: ${{ inputs.message_thread_id }}
+        protect_content: ${{ inputs.protect_content }}
+        reply_to_message_id: ${{ inputs.reply_to_message_id }}
+
+  returns: ${{ steps.run.result }}

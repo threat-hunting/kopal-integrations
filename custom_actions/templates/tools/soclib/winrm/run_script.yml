@@ -1,0 +1,55 @@
+type: action
+definition:
+  title: "WinRM: Run PowerShell script"
+  description: >
+    Run PowerShell directly on the target. Provide script_str (inline script or command).
+    Equivalent to winrm-run-powershell. Uses soclib_winrm secret.
+  display_group: "SOCLib / Windows Remote Management"
+  namespace: tools.soclib.winrm
+  name: run_script
+
+  secrets:
+    - name: soclib_winrm
+      keys: ["WINRM_ENDPOINT", "WINRM_USERNAME", "WINRM_PASSWORD", "WINRM_TRANSPORT"]
+      optional_keys:
+        - WINRM_PROTOCOL
+        - WINRM_PORT
+        - WINRM_DOMAIN
+        - WINRM_VERIFY_SSL
+        - WINRM_CERT_PEM
+        - WINRM_CERT_KEY_PEM
+        - WINRM_CA_TRUST
+
+  expects:
+    script_str:
+      type: str | None
+      description: "PowerShell script or command (inline). Either script_str or script_file (URL or path on target) is required. Type string or null."
+      default: null
+    script_file:
+      type: str | None
+      description: "Optional. (1) URL (http/https) to fetch script — e.g. GitHub raw, GitLab raw. Or (2) Full path on TARGET — e.g. C:\\Scripts\\run.ps1 or \\\\server\\share\\script.ps1 (UNC). Type string or null."
+      default: null
+    script_arguments:
+      type: str | None
+      description: "Optional. Arguments to the script when script_file is a path on target (e.g. -ComputerName X -Verbose). Ignored for URL or script_str. Type string or null."
+      default: null
+    ip_hostname:
+      type: str | None
+      description: "Optional. Override target host (overrides WINRM_ENDPOINT). Type string or null."
+      default: null
+    run_async:
+      type: bool
+      description: "Optional. Not supported; execution is always synchronous. Type bool, default false."
+      default: false
+
+  steps:
+    - ref: run
+      action: integrations.soclib.winrm.run_script
+      args:
+        script_str: ${{ inputs.script_str }}
+        script_file: ${{ inputs.script_file }}
+        script_arguments: ${{ inputs.script_arguments }}
+        ip_hostname: ${{ inputs.ip_hostname }}
+        run_async: ${{ inputs.run_async }}
+
+  returns: ${{ steps.run.result }}

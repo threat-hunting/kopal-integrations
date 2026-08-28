@@ -1,0 +1,38 @@
+type: action
+definition:
+  title: "AD: Get attributes"
+  description: >
+    Get LDAP attributes for one or more principals. Accepts sAMAccountName, UPN, or full DN.
+    Use semicolons to pass multiple principals. Optionally use attribute_preset for predefined
+    attribute sets (basic, security, detailed, all).
+  display_group: "SOCLib / Active Directory"
+  namespace: tools.soclib.ad
+  name: get_attributes
+
+  secrets:
+    - name: soclib_active_directory
+      keys: ["AD_URL", "AD_BIND_DN", "AD_BIND_PASSWORD", "AD_BASE_DN"]
+      optional_keys: ["AD_SECURE_CONNECTION", "AD_VALIDATE_SSL", "AD_AUTH_TYPE", "AD_TIMEOUT"]
+
+  expects:
+    principals:
+      type: str
+      description: "Semicolon-separated principals (sAMAccountName, UPN, or DN); also accepts list. Example: administrator;user@domain.local"
+    attributes:
+      type: str
+      description: "Semicolon-separated attribute names to return. Example: sAMAccountName;mail;displayName"
+      default: "sAMAccountName"
+    attribute_preset:
+      type: str
+      description: "Preset set of attributes: basic, security, detailed, or all (adds to attributes). Example: basic"
+      default: null
+
+  steps:
+    - ref: get
+      action: integrations.soclib.ad.get_attributes
+      args:
+        principals: ${{ inputs.principals }}
+        attributes: ${{ inputs.attributes }}
+        attribute_preset: ${{ inputs.attribute_preset }}
+
+  returns: ${{ steps.get.result }}

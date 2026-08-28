@@ -1,0 +1,55 @@
+type: action
+definition:
+  title: "Telegram: Set webhook"
+  description: >
+    Fixed IP address for webhook (optional).
+  display_group: "SOCLib / Telegram"
+  namespace: tools.soclib.telegram
+  name: set_webhook
+
+  secrets:
+    - name: soclib_telegram
+      keys: ["TELEGRAM_BOT_TOKEN"]
+      optional_keys:
+        - TELEGRAM_DEFAULT_CHAT_ID
+        - TELEGRAM_API_BASE_URL
+        - TELEGRAM_DEFAULT_PARSE_MODE
+        - TELEGRAM_WEBHOOK_SECRET
+
+  expects:
+    url:
+      type: str
+      description: HTTPS webhook URL (Kopal webhook endpoint)..
+    secret_token:
+      type: str | None
+      description: X-Telegram-Bot-Api-Secret-Token value. Uses TELEGRAM_WEBHOOK_SECRET if omitted..
+      default: null
+    drop_pending_updates:
+      type: bool | None
+      description: Drop pending updates when switching to webhook..
+      default: null
+    max_connections:
+      type: int | None
+      description: Maximum allowed webhook connections (1–100)..
+      default: null
+    allowed_updates:
+      type: str | None
+      description: JSON array of update types to receive..
+      default: null
+    ip_address:
+      type: str | None
+      description: Fixed IP address for webhook (optional)..
+      default: null
+
+  steps:
+    - ref: run
+      action: integrations.soclib.telegram.set_webhook
+      args:
+        url: ${{ inputs.url }}
+        secret_token: ${{ inputs.secret_token }}
+        drop_pending_updates: ${{ inputs.drop_pending_updates }}
+        max_connections: ${{ inputs.max_connections }}
+        allowed_updates: ${{ inputs.allowed_updates }}
+        ip_address: ${{ inputs.ip_address }}
+
+  returns: ${{ steps.run.result }}

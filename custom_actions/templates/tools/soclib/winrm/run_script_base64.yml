@@ -1,0 +1,21 @@
+type: action
+definition:
+  title: "WinRM: Run script (base64)"
+  description: Run a PowerShell script provided as base64. Uses soclib_winrm secret.
+  display_group: "SOCLib / Windows Remote Management"
+  namespace: tools.soclib.winrm
+  name: run_script_base64
+  secrets:
+    - name: soclib_winrm
+      keys: ["WINRM_ENDPOINT", "WINRM_USERNAME", "WINRM_PASSWORD", "WINRM_TRANSPORT"]
+      optional_keys: ["WINRM_PROTOCOL", "WINRM_PORT", "WINRM_DOMAIN", "WINRM_VERIFY_SSL", "WINRM_CERT_PEM", "WINRM_CERT_KEY_PEM", "WINRM_CA_TRUST"]
+  expects:
+    script_base64: { type: str }
+    ip_hostname: { type: str | None, default: null }
+  steps:
+    - ref: run
+      action: integrations.soclib.winrm.run_script_base64
+      args:
+        script_base64: ${{ inputs.script_base64 }}
+        ip_hostname: ${{ inputs.ip_hostname }}
+  returns: ${{ steps.run.result }}

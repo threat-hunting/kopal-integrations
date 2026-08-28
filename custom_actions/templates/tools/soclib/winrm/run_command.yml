@@ -1,0 +1,49 @@
+type: action
+definition:
+  title: "WinRM: Run command (CMD)"
+  description: >
+    Run a CMD command on the target (e.g. whoami, ipconfig). Equivalent to winrm-run-process.
+    Uses soclib_winrm secret.
+  display_group: "SOCLib / Windows Remote Management"
+  namespace: tools.soclib.winrm
+  name: run_command
+
+  secrets:
+    - name: soclib_winrm
+      keys: ["WINRM_ENDPOINT", "WINRM_USERNAME", "WINRM_PASSWORD", "WINRM_TRANSPORT"]
+      optional_keys:
+        - WINRM_PROTOCOL
+        - WINRM_PORT
+        - WINRM_DOMAIN
+        - WINRM_VERIFY_SSL
+        - WINRM_CERT_PEM
+        - WINRM_CERT_KEY_PEM
+        - WINRM_CA_TRUST
+
+  expects:
+    command:
+      type: str
+      description: "CMD command to run on the target. Example: whoami, hostname, ipconfig. Required."
+    arguments:
+      type: str | None
+      description: "Optional. Space-separated arguments for the command. Example: /all for ipconfig /all. Type string or null."
+      default: null
+    ip_hostname:
+      type: str | None
+      description: "Optional. Override target host for this call (overrides WINRM_ENDPOINT). Example: 192.168.1.10. Type string or null."
+      default: null
+    run_async:
+      type: bool
+      description: "Optional. Not supported; execution is always synchronous. Type bool, default false."
+      default: false
+
+  steps:
+    - ref: run
+      action: integrations.soclib.winrm.run_command
+      args:
+        command: ${{ inputs.command }}
+        arguments: ${{ inputs.arguments }}
+        ip_hostname: ${{ inputs.ip_hostname }}
+        run_async: ${{ inputs.run_async }}
+
+  returns: ${{ steps.run.result }}

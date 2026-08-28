@@ -1,0 +1,39 @@
+type: action
+definition:
+  title: "AD: Contain user"
+  description: >
+    SOAR containment: run one or more actions to contain a user (disable account, reset
+    password, remove from all groups, move to quarantine OU). Actions are semicolon-separated;
+    use quarantine_ou when using move_to_quarantine_ou.
+  display_group: "SOCLib / Active Directory"
+  namespace: tools.soclib.ad
+  name: contain_user
+  secrets:
+    - name: soclib_active_directory
+      keys: ["AD_URL", "AD_BIND_DN", "AD_BIND_PASSWORD", "AD_BASE_DN"]
+      optional_keys: ["AD_SECURE_CONNECTION", "AD_VALIDATE_SSL", "AD_AUTH_TYPE", "AD_TIMEOUT"]
+  expects:
+    user:
+      type: str
+      description: "User to contain (sAMAccountName, UPN, DN, or email)."
+    identifier_type:
+      type: str
+      description: "How to resolve user: auto, samaccountname, dn, upn, email."
+      default: "auto"
+    actions:
+      type: str
+      description: "Semicolon-separated actions: disable, reset_password, remove_all_groups, move_to_quarantine_ou."
+      default: "disable;reset_password"
+    quarantine_ou:
+      type: str
+      description: "Target OU DN for move_to_quarantine_ou (optional)."
+      default: null
+  steps:
+    - ref: contain
+      action: integrations.soclib.ad.contain_user
+      args:
+        user: ${{ inputs.user }}
+        identifier_type: ${{ inputs.identifier_type }}
+        actions: ${{ inputs.actions }}
+        quarantine_ou: ${{ inputs.quarantine_ou }}
+  returns: ${{ steps.contain.result }}

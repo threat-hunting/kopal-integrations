@@ -1,0 +1,23 @@
+type: action
+definition:
+  title: "WinRM: Block IP"
+  description: Add a firewall rule to block traffic from a remote IP. Uses soclib_winrm secret.
+  display_group: "SOCLib / Windows Remote Management"
+  namespace: tools.soclib.winrm
+  name: block_ip
+  secrets:
+    - name: soclib_winrm
+      keys: ["WINRM_ENDPOINT", "WINRM_USERNAME", "WINRM_PASSWORD", "WINRM_TRANSPORT"]
+      optional_keys: ["WINRM_PROTOCOL", "WINRM_PORT", "WINRM_DOMAIN", "WINRM_VERIFY_SSL", "WINRM_CERT_PEM", "WINRM_CERT_KEY_PEM", "WINRM_CA_TRUST"]
+  expects:
+    name: { type: str, description: "Rule name." }
+    remote_ip: { type: str, description: "IP to block." }
+    ip_hostname: { type: str | None, default: null }
+  steps:
+    - ref: block
+      action: integrations.soclib.winrm.block_ip
+      args:
+        name: ${{ inputs.name }}
+        remote_ip: ${{ inputs.remote_ip }}
+        ip_hostname: ${{ inputs.ip_hostname }}
+  returns: ${{ steps.block.result }}
