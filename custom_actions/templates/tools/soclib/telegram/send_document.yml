@@ -1,0 +1,87 @@
+type: action
+definition:
+  title: "Telegram: Send document"
+  description: >
+    Send a document (PDF, CSV, etc.) via sendDocument using URL, file_id, or base64 upload.
+    Provide exactly one of document_url, document_file_id, or document_base64.
+  display_group: "SOCLib / Telegram"
+  namespace: tools.soclib.telegram
+  name: send_document
+  doc_url: https://core.telegram.org/bots/api#senddocument
+
+  secrets:
+    - name: soclib_telegram
+      keys: ["TELEGRAM_BOT_TOKEN"]
+      optional_keys:
+        - TELEGRAM_DEFAULT_CHAT_ID
+        - TELEGRAM_API_BASE_URL
+        - TELEGRAM_DEFAULT_PARSE_MODE
+
+  expects:
+    chat_id:
+      type: str | None
+      description: Target chat. Uses TELEGRAM_DEFAULT_CHAT_ID if omitted.
+      default: null
+    document_url:
+      type: str | None
+      description: HTTPS URL of the document.
+      default: null
+    document_file_id:
+      type: str | None
+      description: Existing Telegram file_id.
+      default: null
+    document_base64:
+      type: str | None
+      description: Base64-encoded file for upload.
+      default: null
+    document_filename:
+      type: str | None
+      description: Filename when using document_base64 (required for upload).
+      default: null
+    caption:
+      type: str | None
+      description: Optional caption.
+      default: null
+    parse_mode:
+      type: str | None
+      description: Caption parse mode.
+      default: null
+    disable_notification:
+      type: bool | None
+      description: Send silently when true.
+      default: null
+    disable_content_type_detection:
+      type: bool | None
+      description: Force send as document without MIME sniffing.
+      default: null
+    message_thread_id:
+      type: int | None
+      description: Forum topic thread id.
+      default: null
+    protect_content:
+      type: bool | None
+      description: Prevent forwarding/saving when true.
+      default: null
+    reply_to_message_id:
+      type: int | None
+      description: Reply to an existing message id.
+      default: null
+
+  steps:
+    - ref: send
+      action: integrations.soclib.telegram.send_document
+      args:
+        chat_id: ${{ inputs.chat_id }}
+        document_url: ${{ inputs.document_url }}
+        document_file_id: ${{ inputs.document_file_id }}
+        document_base64: ${{ inputs.document_base64 }}
+        document_filename: ${{ inputs.document_filename }}
+        caption: ${{ inputs.caption }}
+        parse_mode: ${{ inputs.parse_mode }}
+        disable_notification: ${{ inputs.disable_notification }}
+        disable_content_type_detection: ${{ inputs.disable_content_type_detection }}
+        message_thread_id: ${{ inputs.message_thread_id }}
+        protect_content: ${{ inputs.protect_content }}
+        reply_to_message_id: ${{ inputs.reply_to_message_id }}
+
+  returns: ${{ steps.send.result }}

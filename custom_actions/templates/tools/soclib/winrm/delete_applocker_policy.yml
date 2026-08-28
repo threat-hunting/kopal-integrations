@@ -1,0 +1,23 @@
+type: action
+definition:
+  title: "WinRM: Delete AppLocker policy"
+  description: Remove AppLocker policy/rule. Uses soclib_winrm secret.
+  display_group: "SOCLib / Windows Remote Management"
+  namespace: tools.soclib.winrm
+  name: delete_applocker_policy
+  secrets:
+    - name: soclib_winrm
+      keys: ["WINRM_ENDPOINT", "WINRM_USERNAME", "WINRM_PASSWORD", "WINRM_TRANSPORT"]
+      optional_keys: ["WINRM_PROTOCOL", "WINRM_PORT", "WINRM_DOMAIN", "WINRM_VERIFY_SSL", "WINRM_CERT_PEM", "WINRM_CERT_KEY_PEM", "WINRM_CA_TRUST"]
+  expects:
+    applocker_policy_id: { type: str }
+    ldap: { type: str | None, default: null }
+    ip_hostname: { type: str | None, default: null }
+  steps:
+    - ref: del
+      action: integrations.soclib.winrm.delete_applocker_policy
+      args:
+        applocker_policy_id: ${{ inputs.applocker_policy_id }}
+        ldap: ${{ inputs.ldap }}
+        ip_hostname: ${{ inputs.ip_hostname }}
+  returns: ${{ steps.del.result }}

@@ -1,0 +1,21 @@
+type: action
+definition:
+  title: "WinRM: Restart system"
+  description: Restart the target system. Uses soclib_winrm secret.
+  display_group: "SOCLib / Windows Remote Management"
+  namespace: tools.soclib.winrm
+  name: restart_system
+  secrets:
+    - name: soclib_winrm
+      keys: ["WINRM_ENDPOINT", "WINRM_USERNAME", "WINRM_PASSWORD", "WINRM_TRANSPORT"]
+      optional_keys: ["WINRM_PROTOCOL", "WINRM_PORT", "WINRM_DOMAIN", "WINRM_VERIFY_SSL", "WINRM_CERT_PEM", "WINRM_CERT_KEY_PEM", "WINRM_CA_TRUST"]
+  expects:
+    ip_hostname: { type: str | None, default: null }
+    comment: { type: str | None, default: null }
+  steps:
+    - ref: restart
+      action: integrations.soclib.winrm.restart_system
+      args:
+        ip_hostname: ${{ inputs.ip_hostname }}
+        comment: ${{ inputs.comment }}
+  returns: ${{ steps.restart.result }}

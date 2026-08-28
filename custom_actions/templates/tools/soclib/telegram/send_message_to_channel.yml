@@ -1,0 +1,61 @@
+type: action
+definition:
+  title: "Telegram: Send message to channel"
+  description: >
+    Post text to a Telegram channel. Bot must be channel admin with post_messages.
+    Validates chat type via getChat when validate_channel is true.
+  display_group: "SOCLib / Telegram"
+  namespace: tools.soclib.telegram
+  name: send_message_to_channel
+  doc_url: https://core.telegram.org/bots/api#sendmessage
+
+  secrets:
+    - name: soclib_telegram
+      keys: ["TELEGRAM_BOT_TOKEN"]
+      optional_keys:
+        - TELEGRAM_DEFAULT_CHAT_ID
+        - TELEGRAM_API_BASE_URL
+        - TELEGRAM_DEFAULT_PARSE_MODE
+
+  expects:
+    text:
+      type: str
+      description: Channel post text (HTML recommended for SOC alerts).
+    chat_id:
+      type: str | None
+      description: Channel @username or numeric id. Uses secret default if omitted.
+      default: null
+    parse_mode:
+      type: str | None
+      description: Parse mode (defaults to HTML when unset).
+      default: null
+    disable_notification:
+      type: bool | None
+      description: Send silently when true.
+      default: null
+    validate_channel:
+      type: bool
+      description: Call getChat to verify target is a channel.
+      default: true
+    message_thread_id:
+      type: int | None
+      description: Forum topic id if channel has topics enabled.
+      default: null
+    protect_content:
+      type: bool | None
+      description: Prevent forwarding/saving when true.
+      default: null
+
+  steps:
+    - ref: send
+      action: integrations.soclib.telegram.send_message_to_channel
+      args:
+        text: ${{ inputs.text }}
+        chat_id: ${{ inputs.chat_id }}
+        parse_mode: ${{ inputs.parse_mode }}
+        disable_notification: ${{ inputs.disable_notification }}
+        validate_channel: ${{ inputs.validate_channel }}
+        message_thread_id: ${{ inputs.message_thread_id }}
+        protect_content: ${{ inputs.protect_content }}
+
+  returns: ${{ steps.send.result }}

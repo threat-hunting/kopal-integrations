@@ -1,0 +1,48 @@
+type: action
+definition:
+  title: "Splunk ES: Update task note"
+  description: >
+    Update an existing task note in Splunk ES.
+    Returns the updated note.
+  display_group: "SOCLib / Splunk Enterprise Security"
+  namespace: tools.soclib.splunkes
+  name: update_task_note
+  doc_url: https://help.splunk.com/en/splunk-enterprise-security-8/api-reference/8.4/splunk-enterprise-security-api-reference/responseplan/public_v2_update_note_in_task
+
+  secrets:
+    - name: soclib_splunk_es
+      keys: ["SPLUNK_BASE_URL", "SPLUNK_API_TOKEN"]
+      optional_keys: ["SPLUNK_VERIFY_SSL", "SPLUNK_NAMESPACE_OWNER", "SPLUNK_NAMESPACE_APP"]
+
+  expects:
+    investigation_id:
+      type: str
+      description: Investigation ID (GUID) or display_id.
+    response_plan_id:
+      type: str
+      description: Response Plan ID.
+    phase_id:
+      type: str
+      description: Phase ID.
+    task_id:
+      type: str
+      description: Task ID.
+    note_id:
+      type: str
+      description: Note ID.
+    note:
+      type: str
+      description: Updated note content.
+
+  steps:
+    - ref: update
+      action: integrations.soclib.splunkes.update_task_note
+      args:
+        investigation_id: ${{ inputs.investigation_id }}
+        response_plan_id: ${{ inputs.response_plan_id }}
+        phase_id: ${{ inputs.phase_id }}
+        task_id: ${{ inputs.task_id }}
+        note_id: ${{ inputs.note_id }}
+        note: ${{ inputs.note }}
+
+  returns: ${{ steps.update.result }}

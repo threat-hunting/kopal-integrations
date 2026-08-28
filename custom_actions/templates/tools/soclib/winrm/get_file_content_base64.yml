@@ -1,0 +1,30 @@
+type: action
+definition:
+  title: "WinRM: Get file (base64)"
+  description: Download a file from the target and return content as base64. Uses soclib_winrm secret.
+  display_group: "SOCLib / Windows Remote Management"
+  namespace: tools.soclib.winrm
+  name: get_file_content_base64
+  secrets:
+    - name: soclib_winrm
+      keys: ["WINRM_ENDPOINT", "WINRM_USERNAME", "WINRM_PASSWORD", "WINRM_TRANSPORT"]
+      optional_keys:
+        - WINRM_PROTOCOL
+        - WINRM_PORT
+        - WINRM_DOMAIN
+        - WINRM_VERIFY_SSL
+        - WINRM_CERT_PEM
+        - WINRM_CERT_KEY_PEM
+        - WINRM_CA_TRUST
+  expects:
+    file_path: { type: str, description: "Full path to file on target." }
+    max_size_mb: { type: float | None, description: "Refuse to read if file is larger (MB).", default: null }
+    ip_hostname: { type: str | None, description: "Override target host.", default: null }
+  steps:
+    - ref: get
+      action: integrations.soclib.winrm.get_file_content_base64
+      args:
+        file_path: ${{ inputs.file_path }}
+        max_size_mb: ${{ inputs.max_size_mb }}
+        ip_hostname: ${{ inputs.ip_hostname }}
+  returns: ${{ steps.get.result }}

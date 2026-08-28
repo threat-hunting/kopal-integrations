@@ -1,0 +1,53 @@
+type: action
+definition:
+  title: "WinRM: Get event log"
+  description: Read Windows Event Log entries. Uses soclib_winrm secret.
+  display_group: "SOCLib / Windows Remote Management"
+  namespace: tools.soclib.winrm
+  name: get_event_log
+
+  secrets:
+    - name: soclib_winrm
+      keys: ["WINRM_ENDPOINT", "WINRM_USERNAME", "WINRM_PASSWORD", "WINRM_TRANSPORT"]
+      optional_keys:
+        - WINRM_PROTOCOL
+        - WINRM_PORT
+        - WINRM_DOMAIN
+        - WINRM_VERIFY_SSL
+        - WINRM_CERT_PEM
+        - WINRM_CERT_KEY_PEM
+        - WINRM_CA_TRUST
+
+  expects:
+    log_name:
+      type: str
+      description: "Log name (e.g. Application, Security, System)."
+      default: "Application"
+    entry_count:
+      type: int
+      description: "Max number of entries to return."
+      default: 50
+    level:
+      type: str | None
+      description: "Filter by level (Critical, Error, Warning, Information)."
+      default: null
+    source:
+      type: str | None
+      description: "Filter by source (provider)."
+      default: null
+    ip_hostname:
+      type: str | None
+      description: "Override target host."
+      default: null
+
+  steps:
+    - ref: get
+      action: integrations.soclib.winrm.get_event_log
+      args:
+        log_name: ${{ inputs.log_name }}
+        entry_count: ${{ inputs.entry_count }}
+        level: ${{ inputs.level }}
+        source: ${{ inputs.source }}
+        ip_hostname: ${{ inputs.ip_hostname }}
+
+  returns: ${{ steps.get.result }}

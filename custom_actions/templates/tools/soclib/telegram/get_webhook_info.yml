@@ -1,0 +1,27 @@
+type: action
+definition:
+  title: "Telegram: Get webhook info"
+  description: >
+    Return current webhook configuration (getWebhookInfo).
+    Use to check whether inbound uses webhook or long polling.
+  display_group: "SOCLib / Telegram"
+  namespace: tools.soclib.telegram
+  name: get_webhook_info
+  doc_url: https://core.telegram.org/bots/api#getwebhookinfo
+
+  secrets:
+    - name: soclib_telegram
+      keys: ["TELEGRAM_BOT_TOKEN"]
+      optional_keys:
+        - TELEGRAM_DEFAULT_CHAT_ID
+        - TELEGRAM_API_BASE_URL
+        - TELEGRAM_DEFAULT_PARSE_MODE
+
+  expects: {}
+
+  steps:
+    - ref: info
+      action: integrations.soclib.telegram.get_webhook_info
+      args: {}
+
+  returns: ${{ steps.info.result }}

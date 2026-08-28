@@ -1,0 +1,28 @@
+type: action
+definition:
+  title: "AD: Delete user"
+  description: >
+    Permanently delete a user (or other object) from Active Directory. Provide the user
+    by sAMAccountName, UPN, email, or DN. identifier_type controls how the user is resolved.
+  display_group: "SOCLib / Active Directory"
+  namespace: tools.soclib.ad
+  name: delete_user
+  secrets:
+    - name: soclib_active_directory
+      keys: ["AD_URL", "AD_BIND_DN", "AD_BIND_PASSWORD", "AD_BASE_DN"]
+      optional_keys: ["AD_SECURE_CONNECTION", "AD_VALIDATE_SSL", "AD_AUTH_TYPE", "AD_TIMEOUT"]
+  expects:
+    user:
+      type: str
+      description: "User to delete (sAMAccountName, UPN, email, or DN)."
+    identifier_type:
+      type: str
+      description: "How to resolve user: auto, samaccountname, dn, upn, or email."
+      default: "auto"
+  steps:
+    - ref: delete
+      action: integrations.soclib.ad.delete_user
+      args:
+        user: ${{ inputs.user }}
+        identifier_type: ${{ inputs.identifier_type }}
+  returns: ${{ steps.delete.result }}

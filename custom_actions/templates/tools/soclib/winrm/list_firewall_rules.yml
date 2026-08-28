@@ -1,0 +1,29 @@
+type: action
+definition:
+  title: "WinRM: List firewall rules"
+  description: List Windows Firewall rules on the target. Uses soclib_winrm secret.
+  display_group: "SOCLib / Windows Remote Management"
+  namespace: tools.soclib.winrm
+  name: list_firewall_rules
+  secrets:
+    - name: soclib_winrm
+      keys: ["WINRM_ENDPOINT", "WINRM_USERNAME", "WINRM_PASSWORD", "WINRM_TRANSPORT"]
+      optional_keys: ["WINRM_PROTOCOL", "WINRM_PORT", "WINRM_DOMAIN", "WINRM_VERIFY_SSL", "WINRM_CERT_PEM", "WINRM_CERT_KEY_PEM", "WINRM_CA_TRUST"]
+  expects:
+    filter_port: { type: str | None, default: null }
+    filter_ip: { type: str | None, default: null }
+    direction: { type: str | None, default: null }
+    protocol: { type: str | None, default: null }
+    max_count: { type: int | None, description: "Max number of rules to return.", default: null }
+    ip_hostname: { type: str | None, default: null }
+  steps:
+    - ref: list
+      action: integrations.soclib.winrm.list_firewall_rules
+      args:
+        filter_port: ${{ inputs.filter_port }}
+        filter_ip: ${{ inputs.filter_ip }}
+        direction: ${{ inputs.direction }}
+        protocol: ${{ inputs.protocol }}
+        max_count: ${{ inputs.max_count }}
+        ip_hostname: ${{ inputs.ip_hostname }}
+  returns: ${{ steps.list.result }}

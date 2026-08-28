@@ -1,0 +1,19 @@
+type: action
+definition:
+  title: "AD: Get domain info"
+  description: >
+    Retrieve domain information from Active Directory (e.g. domain name, DNS name).
+    No inputs required. Uses the configured soclib_active_directory secret.
+  display_group: "SOCLib / Active Directory"
+  namespace: tools.soclib.ad
+  name: get_domain_info
+  secrets:
+    - name: soclib_active_directory
+      keys: ["AD_URL", "AD_BIND_DN", "AD_BIND_PASSWORD", "AD_BASE_DN"]
+      optional_keys: ["AD_SECURE_CONNECTION", "AD_VALIDATE_SSL", "AD_AUTH_TYPE", "AD_TIMEOUT"]
+  expects: {}
+  steps:
+    - ref: info
+      action: integrations.soclib.ad.get_domain_info
+      args: {}
+  returns: ${{ steps.info.result }}

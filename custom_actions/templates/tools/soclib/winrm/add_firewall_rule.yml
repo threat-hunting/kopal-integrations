@@ -1,0 +1,37 @@
+type: action
+definition:
+  title: "WinRM: Add firewall rule"
+  description: Add a Windows Firewall rule (allow, block, bypass). Uses soclib_winrm secret.
+  display_group: "SOCLib / Windows Remote Management"
+  namespace: tools.soclib.winrm
+  name: add_firewall_rule
+  secrets:
+    - name: soclib_winrm
+      keys: ["WINRM_ENDPOINT", "WINRM_USERNAME", "WINRM_PASSWORD", "WINRM_TRANSPORT"]
+      optional_keys: ["WINRM_PROTOCOL", "WINRM_PORT", "WINRM_DOMAIN", "WINRM_VERIFY_SSL", "WINRM_CERT_PEM", "WINRM_CERT_KEY_PEM", "WINRM_CA_TRUST"]
+  expects:
+    name: { type: str }
+    dir: { type: str, description: "in or out" }
+    action: { type: str, description: "allow, block, or bypass" }
+    remote_ip: { type: str | None, default: null }
+    local_ip: { type: str | None, default: null }
+    remote_port: { type: str | None, default: null }
+    local_port: { type: str | None, default: null }
+    protocol: { type: str | None, default: null }
+    profile: { type: str | None, description: "Profiles: Domain, Private, Public (comma-separated).", default: null }
+    ip_hostname: { type: str | None, default: null }
+  steps:
+    - ref: add
+      action: integrations.soclib.winrm.add_firewall_rule
+      args:
+        name: ${{ inputs.name }}
+        dir: ${{ inputs.dir }}
+        action: ${{ inputs.action }}
+        remote_ip: ${{ inputs.remote_ip }}
+        local_ip: ${{ inputs.local_ip }}
+        remote_port: ${{ inputs.remote_port }}
+        local_port: ${{ inputs.local_port }}
+        protocol: ${{ inputs.protocol }}
+        profile: ${{ inputs.profile }}
+        ip_hostname: ${{ inputs.ip_hostname }}
+  returns: ${{ steps.add.result }}

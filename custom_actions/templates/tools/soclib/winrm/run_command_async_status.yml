@@ -1,0 +1,37 @@
+type: action
+definition:
+  title: "WinRM: Get async command output"
+  description: Get output of a previously started async command. Not supported across separate invocations.
+  display_group: "SOCLib / Windows Remote Management"
+  namespace: tools.soclib.winrm
+  name: run_command_async_status
+  secrets:
+    - name: soclib_winrm
+      keys: ["WINRM_ENDPOINT", "WINRM_USERNAME", "WINRM_PASSWORD", "WINRM_TRANSPORT"]
+      optional_keys:
+        - WINRM_PROTOCOL
+        - WINRM_PORT
+        - WINRM_DOMAIN
+        - WINRM_VERIFY_SSL
+        - WINRM_CERT_PEM
+        - WINRM_CERT_KEY_PEM
+        - WINRM_CA_TRUST
+  expects:
+    command_id:
+      type: str
+      description: "Command ID from run_command with run_async=true."
+    shell_id:
+      type: str
+      description: "Shell ID from run_command with run_async=true."
+    ip_hostname:
+      type: str | None
+      description: "Override target host."
+      default: null
+  steps:
+    - ref: get
+      action: integrations.soclib.winrm.run_command_async_status
+      args:
+        command_id: ${{ inputs.command_id }}
+        shell_id: ${{ inputs.shell_id }}
+        ip_hostname: ${{ inputs.ip_hostname }}
+  returns: ${{ steps.get.result }}

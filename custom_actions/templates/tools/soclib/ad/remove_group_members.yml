@@ -1,0 +1,33 @@
+type: action
+definition:
+  title: "AD: Remove group members"
+  description: >
+    Remove one or more members from one or more groups. Members and groups are
+    semicolon-separated. Set use_samaccountname true when member/group values are
+    sAMAccountNames rather than DNs.
+  display_group: "SOCLib / Active Directory"
+  namespace: tools.soclib.ad
+  name: remove_group_members
+  secrets:
+    - name: soclib_active_directory
+      keys: ["AD_URL", "AD_BIND_DN", "AD_BIND_PASSWORD", "AD_BASE_DN"]
+      optional_keys: ["AD_SECURE_CONNECTION", "AD_VALIDATE_SSL", "AD_AUTH_TYPE", "AD_TIMEOUT"]
+  expects:
+    members:
+      type: str
+      description: "Semicolon-separated list of members (users or groups)."
+    groups:
+      type: str
+      description: "Semicolon-separated list of groups."
+    use_samaccountname:
+      type: bool
+      description: "True if members/groups are sAMAccountNames."
+      default: false
+  steps:
+    - ref: remove
+      action: integrations.soclib.ad.remove_group_members
+      args:
+        members: ${{ inputs.members }}
+        groups: ${{ inputs.groups }}
+        use_samaccountname: ${{ inputs.use_samaccountname }}
+  returns: ${{ steps.remove.result }}

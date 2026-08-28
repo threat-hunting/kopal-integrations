@@ -1,0 +1,33 @@
+type: action
+definition:
+  title: "Splunk ES: Get asset"
+  description: >
+    Retrieve asset information by ID from Splunk ES.
+    Returns asset details.
+  display_group: "SOCLib / Splunk Enterprise Security"
+  namespace: tools.soclib.splunkes
+  name: get_asset
+  doc_url: https://help.splunk.com/en/splunk-enterprise-security-8/api-reference/8.4/splunk-enterprise-security-api-reference/assets/public_v2_assets
+
+  secrets:
+    - name: soclib_splunk_es
+      keys: ["SPLUNK_BASE_URL", "SPLUNK_API_TOKEN"]
+      optional_keys: ["SPLUNK_VERIFY_SSL", "SPLUNK_NAMESPACE_OWNER", "SPLUNK_NAMESPACE_APP"]
+
+  expects:
+    id:
+      type: str
+      description: Asset ID.
+    search_format:
+      type: bool
+      description: "Return format suitable for Splunk search (default: false)."
+      default: false
+
+  steps:
+    - ref: get
+      action: integrations.soclib.splunkes.get_asset
+      args:
+        id: ${{ inputs.id }}
+        search_format: ${{ inputs.search_format }}
+
+  returns: ${{ steps.get.result }}

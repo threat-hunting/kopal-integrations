@@ -1,0 +1,42 @@
+type: action
+definition:
+  title: "WinRM: Get registry value"
+  description: Read a registry value (key path and value name). Uses soclib_winrm secret.
+  display_group: "SOCLib / Windows Remote Management"
+  namespace: tools.soclib.winrm
+  name: get_registry_value
+
+  secrets:
+    - name: soclib_winrm
+      keys: ["WINRM_ENDPOINT", "WINRM_USERNAME", "WINRM_PASSWORD", "WINRM_TRANSPORT"]
+      optional_keys:
+        - WINRM_PROTOCOL
+        - WINRM_PORT
+        - WINRM_DOMAIN
+        - WINRM_VERIFY_SSL
+        - WINRM_CERT_PEM
+        - WINRM_CERT_KEY_PEM
+        - WINRM_CA_TRUST
+
+  expects:
+    key_path:
+      type: str
+      description: "Registry key path (e.g. HKLM:\\SOFTWARE\\MyApp)."
+    value_name:
+      type: str | None
+      description: "Value name; empty for default."
+      default: null
+    ip_hostname:
+      type: str | None
+      description: "Override target host."
+      default: null
+
+  steps:
+    - ref: get
+      action: integrations.soclib.winrm.get_registry_value
+      args:
+        key_path: ${{ inputs.key_path }}
+        value_name: ${{ inputs.value_name }}
+        ip_hostname: ${{ inputs.ip_hostname }}
+
+  returns: ${{ steps.get.result }}

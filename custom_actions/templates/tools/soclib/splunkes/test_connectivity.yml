@@ -1,0 +1,25 @@
+type: action
+definition:
+  title: "Splunk ES: Test connectivity"
+  description: >
+    Test connection to Splunk ES and verify API access.
+    Checks Splunk version, ES installation, and API token permissions.
+    No inputs required. Use this to verify credentials and connectivity
+    before running other Splunk ES actions.
+  display_group: "SOCLib / Splunk Enterprise Security"
+  namespace: tools.soclib.splunkes
+  name: test_connectivity
+
+  secrets:
+    - name: soclib_splunk_es
+      keys: ["SPLUNK_BASE_URL", "SPLUNK_API_TOKEN"]
+      optional_keys: ["SPLUNK_VERIFY_SSL", "SPLUNK_NAMESPACE_OWNER", "SPLUNK_NAMESPACE_APP"]
+
+  expects: {}
+
+  steps:
+    - ref: test
+      action: integrations.soclib.splunkes.test_connectivity
+      args: {}
+
+  returns: ${{ steps.test.result }}

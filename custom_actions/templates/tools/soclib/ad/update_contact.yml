@@ -1,0 +1,27 @@
+type: action
+definition:
+  title: "AD: Update contact"
+  description: >
+    Update one or more attributes of an existing Active Directory contact. Provide the
+    contact DN and a dictionary of attribute names to new values (e.g. mail, telephoneNumber).
+  display_group: "SOCLib / Active Directory"
+  namespace: tools.soclib.ad
+  name: update_contact
+  secrets:
+    - name: soclib_active_directory
+      keys: ["AD_URL", "AD_BIND_DN", "AD_BIND_PASSWORD", "AD_BASE_DN"]
+      optional_keys: ["AD_SECURE_CONNECTION", "AD_VALIDATE_SSL", "AD_AUTH_TYPE", "AD_TIMEOUT"]
+  expects:
+    contact_dn:
+      type: str
+      description: "Full DN of the contact to update."
+    attributes:
+      type: any
+      description: "Dictionary of attribute names to values to set."
+  steps:
+    - ref: upd
+      action: integrations.soclib.ad.update_contact
+      args:
+        contact_dn: ${{ inputs.contact_dn }}
+        attributes: ${{ inputs.attributes }}
+  returns: ${{ steps.upd.result }}

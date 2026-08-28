@@ -1,0 +1,27 @@
+type: action
+definition:
+  title: "WMI: Get startup commands"
+  description: Get startup commands (Win32_StartupCommand).
+  display_group: "SOCLib / WMI"
+  namespace: tools.soclib.wmi
+  name: get_startup_commands
+  secrets:
+    - name: soclib_wmi
+      keys: ["WMI_SERVER", "WMI_USERNAME", "WMI_PASSWORD"]
+      optional_keys: [WMI_FORCE_NTLMV2, WMI_NAMESPACE, WMI_DOMAIN]
+  expects:
+    ip_hostname: { type: str | None, default: null }
+    namespace: { type: str | None, default: null }
+    max_count: { type: int | None, description: "Optional. Maximum number of startup commands to return.", default: null }
+    filter_key: { type: str | None, description: "Optional. Property for exact-match filter. Use with filter_value.", default: null }
+    filter_value: { type: str | None, description: "Optional. Value for filter_key.", default: null }
+  steps:
+    - ref: get
+      action: integrations.soclib.wmi.get_startup_commands
+      args:
+        ip_hostname: ${{ inputs.ip_hostname }}
+        namespace: ${{ inputs.namespace }}
+        max_count: ${{ inputs.max_count }}
+        filter_key: ${{ inputs.filter_key }}
+        filter_value: ${{ inputs.filter_value }}
+  returns: ${{ steps.get.result }}

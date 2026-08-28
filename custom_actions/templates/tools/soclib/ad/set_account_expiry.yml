@@ -1,0 +1,34 @@
+type: action
+definition:
+  title: "AD: Set account expiry"
+  description: >
+    Set the account expiration date for an Active Directory user. Use identifier_type
+    to specify how the user is identified (auto, sam, upn, dn). Leave expiry_date null
+    to clear expiry.
+  display_group: "SOCLib / Active Directory"
+  namespace: tools.soclib.ad
+  name: set_account_expiry
+  secrets:
+    - name: soclib_active_directory
+      keys: ["AD_URL", "AD_BIND_DN", "AD_BIND_PASSWORD", "AD_BASE_DN"]
+      optional_keys: ["AD_SECURE_CONNECTION", "AD_VALIDATE_SSL", "AD_AUTH_TYPE", "AD_TIMEOUT"]
+  expects:
+    user:
+      type: str
+      description: "User to set expiry for (sAMAccountName, UPN, or DN)."
+    expiry_date:
+      type: str
+      description: "Expiry date (ISO or parseable); null to clear."
+      default: null
+    identifier_type:
+      type: str
+      description: "How to resolve user: auto, sam, upn, or dn."
+      default: "auto"
+  steps:
+    - ref: exp
+      action: integrations.soclib.ad.set_account_expiry
+      args:
+        user: ${{ inputs.user }}
+        expiry_date: ${{ inputs.expiry_date }}
+        identifier_type: ${{ inputs.identifier_type }}
+  returns: ${{ steps.exp.result }}

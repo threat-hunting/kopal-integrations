@@ -1,0 +1,40 @@
+type: action
+definition:
+  title: "Telegram: Send chat action"
+  description: >
+    Forum topic thread id.
+  display_group: "SOCLib / Telegram"
+  namespace: tools.soclib.telegram
+  name: send_chat_action
+
+  secrets:
+    - name: soclib_telegram
+      keys: ["TELEGRAM_BOT_TOKEN"]
+      optional_keys:
+        - TELEGRAM_DEFAULT_CHAT_ID
+        - TELEGRAM_API_BASE_URL
+        - TELEGRAM_DEFAULT_PARSE_MODE
+        - TELEGRAM_WEBHOOK_SECRET
+
+  expects:
+    action:
+      type: str
+      description: "Chat action: typing, upload_photo, record_video, upload_video, record_voice, upload_voice, upload_document, choose_sticker, find_location, record_video_note, upload_video_note.."
+    chat_id:
+      type: str | None
+      description: Target chat. Uses secret default if omitted..
+      default: null
+    message_thread_id:
+      type: int | None
+      description: Forum topic thread id..
+      default: null
+
+  steps:
+    - ref: run
+      action: integrations.soclib.telegram.send_chat_action
+      args:
+        action: ${{ inputs.action }}
+        chat_id: ${{ inputs.chat_id }}
+        message_thread_id: ${{ inputs.message_thread_id }}
+
+  returns: ${{ steps.run.result }}

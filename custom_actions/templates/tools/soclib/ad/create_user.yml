@@ -1,0 +1,82 @@
+type: action
+definition:
+  title: "AD: Create user"
+  description: >
+    Create a new user in Active Directory. Provide username (sAMAccountName), user_dn,
+    and initial password. All other fields (display_name, email, description, etc.) are
+    optional. Use enabled and must_change_password to control account state.
+  display_group: "SOCLib / Active Directory"
+  namespace: tools.soclib.ad
+  name: create_user
+  secrets:
+    - name: soclib_active_directory
+      keys: ["AD_URL", "AD_BIND_DN", "AD_BIND_PASSWORD", "AD_BASE_DN"]
+      optional_keys: ["AD_SECURE_CONNECTION", "AD_VALIDATE_SSL", "AD_AUTH_TYPE", "AD_TIMEOUT"]
+  expects:
+    username:
+      type: str
+      description: "sAMAccountName for the new user."
+    user_dn:
+      type: str
+      description: "Full DN where the user will be created."
+    password:
+      type: str
+      description: "Initial password for the account."
+    display_name:
+      type: str
+      description: "Display name (optional)."
+      default: null
+    email:
+      type: str
+      description: "E-mail address (optional)."
+      default: null
+    description:
+      type: str
+      description: "User description (optional)."
+      default: null
+    telephone:
+      type: str
+      description: "Telephone number (optional)."
+      default: null
+    title:
+      type: str
+      description: "Job title (optional)."
+      default: null
+    department:
+      type: str
+      description: "Department (optional)."
+      default: null
+    manager_dn:
+      type: str
+      description: "Manager DN (optional)."
+      default: null
+    custom_attributes:
+      type: any
+      description: "Extra LDAP attributes as dict (optional)."
+      default: null
+    enabled:
+      type: bool
+      description: "Create account enabled."
+      default: true
+    must_change_password:
+      type: bool
+      description: "Require password change at next logon."
+      default: true
+  steps:
+    - ref: create
+      action: integrations.soclib.ad.create_user
+      args:
+        username: ${{ inputs.username }}
+        user_dn: ${{ inputs.user_dn }}
+        password: ${{ inputs.password }}
+        display_name: ${{ inputs.display_name }}
+        email: ${{ inputs.email }}
+        description: ${{ inputs.description }}
+        telephone: ${{ inputs.telephone }}
+        title: ${{ inputs.title }}
+        department: ${{ inputs.department }}
+        manager_dn: ${{ inputs.manager_dn }}
+        custom_attributes: ${{ inputs.custom_attributes }}
+        enabled: ${{ inputs.enabled }}
+        must_change_password: ${{ inputs.must_change_password }}
+  returns: ${{ steps.create.result }}

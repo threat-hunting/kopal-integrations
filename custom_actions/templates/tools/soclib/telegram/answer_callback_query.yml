@@ -1,0 +1,50 @@
+type: action
+definition:
+  title: "Telegram: Answer callback query"
+  description: >
+    Cache time in seconds for callback answer.
+  display_group: "SOCLib / Telegram"
+  namespace: tools.soclib.telegram
+  name: answer_callback_query
+
+  secrets:
+    - name: soclib_telegram
+      keys: ["TELEGRAM_BOT_TOKEN"]
+      optional_keys:
+        - TELEGRAM_DEFAULT_CHAT_ID
+        - TELEGRAM_API_BASE_URL
+        - TELEGRAM_DEFAULT_PARSE_MODE
+        - TELEGRAM_WEBHOOK_SECRET
+
+  expects:
+    callback_query_id:
+      type: str
+      description: callback_query.id from parse_update..
+    text:
+      type: str | None
+      description: Notification text (0–200 characters)..
+      default: null
+    show_alert:
+      type: bool | None
+      description: Show as alert popup when true..
+      default: null
+    url:
+      type: str | None
+      description: URL to open (optional)..
+      default: null
+    cache_time:
+      type: int | None
+      description: Cache time in seconds for callback answer..
+      default: null
+
+  steps:
+    - ref: run
+      action: integrations.soclib.telegram.answer_callback_query
+      args:
+        callback_query_id: ${{ inputs.callback_query_id }}
+        text: ${{ inputs.text }}
+        show_alert: ${{ inputs.show_alert }}
+        url: ${{ inputs.url }}
+        cache_time: ${{ inputs.cache_time }}
+
+  returns: ${{ steps.run.result }}

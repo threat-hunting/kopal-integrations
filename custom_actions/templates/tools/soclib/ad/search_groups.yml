@@ -1,0 +1,34 @@
+type: action
+definition:
+  title: "AD: Search groups"
+  description: >
+    Search for groups in Active Directory. Optionally filter by name or group type.
+    size_limit caps the number of results returned.
+  display_group: "SOCLib / Active Directory"
+  namespace: tools.soclib.ad
+  name: search_groups
+  secrets:
+    - name: soclib_active_directory
+      keys: ["AD_URL", "AD_BIND_DN", "AD_BIND_PASSWORD", "AD_BASE_DN"]
+      optional_keys: ["AD_SECURE_CONNECTION", "AD_VALIDATE_SSL", "AD_AUTH_TYPE", "AD_TIMEOUT"]
+  expects:
+    name:
+      type: str
+      description: "Filter by group name (optional)."
+      default: null
+    group_type:
+      type: str
+      description: "Filter by group type (optional)."
+      default: null
+    size_limit:
+      type: int
+      description: "Maximum number of results."
+      default: 50
+  steps:
+    - ref: search
+      action: integrations.soclib.ad.search_groups
+      args:
+        name: ${{ inputs.name }}
+        group_type: ${{ inputs.group_type }}
+        size_limit: ${{ inputs.size_limit }}
+  returns: ${{ steps.search.result }}

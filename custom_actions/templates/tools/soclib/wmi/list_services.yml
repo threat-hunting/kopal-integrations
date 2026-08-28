@@ -1,0 +1,32 @@
+type: action
+definition:
+  title: "WMI: List services"
+  description: Get the list of installed services (Win32_Service). Optionally filter to running only.
+  display_group: "SOCLib / WMI"
+  namespace: tools.soclib.wmi
+  name: list_services
+  secrets:
+    - name: soclib_wmi
+      keys: ["WMI_SERVER", "WMI_USERNAME", "WMI_PASSWORD"]
+      optional_keys:
+        - WMI_FORCE_NTLMV2
+        - WMI_NAMESPACE
+        - WMI_DOMAIN
+  expects:
+    ip_hostname: { type: str | None, description: "Optional. Target host. Example: 192.168.1.10.", default: null }
+    namespace: { type: str | None, description: "Optional. WMI namespace. Default root/cimv2.", default: null }
+    only_running: { type: bool, description: "If true, return only services with State='Running'.", default: false }
+    max_count: { type: int | None, description: "Optional. Maximum number of services to return. Summary includes total_available if set.", default: null }
+    filter_key: { type: str | None, description: "Optional. Property name for exact-match filter (e.g. Name). Use with filter_value.", default: null }
+    filter_value: { type: str | None, description: "Optional. Value for filter_key (exact match).", default: null }
+  steps:
+    - ref: list
+      action: integrations.soclib.wmi.list_services
+      args:
+        ip_hostname: ${{ inputs.ip_hostname }}
+        namespace: ${{ inputs.namespace }}
+        only_running: ${{ inputs.only_running }}
+        max_count: ${{ inputs.max_count }}
+        filter_key: ${{ inputs.filter_key }}
+        filter_value: ${{ inputs.filter_value }}
+  returns: ${{ steps.list.result }}

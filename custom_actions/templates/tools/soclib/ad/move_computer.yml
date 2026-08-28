@@ -1,0 +1,27 @@
+type: action
+definition:
+  title: "AD: Move computer"
+  description: >
+    Move a computer account to a different organizational unit (OU) in Active Directory.
+    Provide the computer name (or DN) and the destination OU DN.
+  display_group: "SOCLib / Active Directory"
+  namespace: tools.soclib.ad
+  name: move_computer
+  secrets:
+    - name: soclib_active_directory
+      keys: ["AD_URL", "AD_BIND_DN", "AD_BIND_PASSWORD", "AD_BASE_DN"]
+      optional_keys: ["AD_SECURE_CONNECTION", "AD_VALIDATE_SSL", "AD_AUTH_TYPE", "AD_TIMEOUT"]
+  expects:
+    computer_name:
+      type: str
+      description: "Computer account name or DN."
+    destination_ou:
+      type: str
+      description: "Full DN of the target OU."
+  steps:
+    - ref: move
+      action: integrations.soclib.ad.move_computer
+      args:
+        computer_name: ${{ inputs.computer_name }}
+        destination_ou: ${{ inputs.destination_ou }}
+  returns: ${{ steps.move.result }}

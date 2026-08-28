@@ -1,0 +1,29 @@
+type: action
+definition:
+  title: "WinRM: List drives"
+  description: List disk drives and space. Uses soclib_winrm secret.
+  display_group: "SOCLib / Windows Remote Management"
+  namespace: tools.soclib.winrm
+  name: list_drives
+  secrets:
+    - name: soclib_winrm
+      keys: ["WINRM_ENDPOINT", "WINRM_USERNAME", "WINRM_PASSWORD", "WINRM_TRANSPORT"]
+      optional_keys:
+        - WINRM_PROTOCOL
+        - WINRM_PORT
+        - WINRM_DOMAIN
+        - WINRM_VERIFY_SSL
+        - WINRM_CERT_PEM
+        - WINRM_CERT_KEY_PEM
+        - WINRM_CA_TRUST
+  expects:
+    ip_hostname:
+      type: str | None
+      description: "Override target host."
+      default: null
+  steps:
+    - ref: list
+      action: integrations.soclib.winrm.list_drives
+      args:
+        ip_hostname: ${{ inputs.ip_hostname }}
+  returns: ${{ steps.list.result }}

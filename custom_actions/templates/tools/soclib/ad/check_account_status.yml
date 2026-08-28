@@ -1,0 +1,29 @@
+type: action
+definition:
+  title: "AD: Check account status"
+  description: >
+    Get detailed account status for a user: enabled/disabled, locked, password expiry,
+    and UAC flags (e.g. password never expires, account disabled). User identified by
+    sAMAccountName, UPN, DN, or email.
+  display_group: "SOCLib / Active Directory"
+  namespace: tools.soclib.ad
+  name: check_account_status
+  secrets:
+    - name: soclib_active_directory
+      keys: ["AD_URL", "AD_BIND_DN", "AD_BIND_PASSWORD", "AD_BASE_DN"]
+      optional_keys: ["AD_SECURE_CONNECTION", "AD_VALIDATE_SSL", "AD_AUTH_TYPE", "AD_TIMEOUT"]
+  expects:
+    user:
+      type: str
+      description: "User identifier (sAMAccountName, UPN, DN, or email)."
+    identifier_type:
+      type: str
+      description: "How to resolve user: auto, samaccountname, dn, upn, email."
+      default: "auto"
+  steps:
+    - ref: check
+      action: integrations.soclib.ad.check_account_status
+      args:
+        user: ${{ inputs.user }}
+        identifier_type: ${{ inputs.identifier_type }}
+  returns: ${{ steps.check.result }}

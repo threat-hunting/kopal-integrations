@@ -1,0 +1,35 @@
+type: action
+definition:
+  title: "Telegram: Delete message"
+  description: >
+    Target chat. Uses secret default if omitted.
+  display_group: "SOCLib / Telegram"
+  namespace: tools.soclib.telegram
+  name: delete_message
+
+  secrets:
+    - name: soclib_telegram
+      keys: ["TELEGRAM_BOT_TOKEN"]
+      optional_keys:
+        - TELEGRAM_DEFAULT_CHAT_ID
+        - TELEGRAM_API_BASE_URL
+        - TELEGRAM_DEFAULT_PARSE_MODE
+        - TELEGRAM_WEBHOOK_SECRET
+
+  expects:
+    message_id:
+      type: str
+      description: Message id to delete..
+    chat_id:
+      type: str | None
+      description: Target chat. Uses secret default if omitted..
+      default: null
+
+  steps:
+    - ref: run
+      action: integrations.soclib.telegram.delete_message
+      args:
+        message_id: ${{ inputs.message_id }}
+        chat_id: ${{ inputs.chat_id }}
+
+  returns: ${{ steps.run.result }}

@@ -1,0 +1,39 @@
+type: action
+definition:
+  title: "AD: Search computers"
+  description: >
+    Search for computer objects in Active Directory. Use query for a custom LDAP-style
+    filter, or preset_filter and name for common patterns. size_limit caps the number of results.
+  display_group: "SOCLib / Active Directory"
+  namespace: tools.soclib.ad
+  name: search_computers
+  secrets:
+    - name: soclib_active_directory
+      keys: ["AD_URL", "AD_BIND_DN", "AD_BIND_PASSWORD", "AD_BASE_DN"]
+      optional_keys: ["AD_SECURE_CONNECTION", "AD_VALIDATE_SSL", "AD_AUTH_TYPE", "AD_TIMEOUT"]
+  expects:
+    query:
+      type: str
+      description: "Custom LDAP filter (optional)."
+      default: null
+    preset_filter:
+      type: str
+      description: "Preset filter name (optional)."
+      default: null
+    name:
+      type: str
+      description: "Filter by computer name (optional)."
+      default: null
+    size_limit:
+      type: int
+      description: "Maximum number of results to return."
+      default: 50
+  steps:
+    - ref: search
+      action: integrations.soclib.ad.search_computers
+      args:
+        query: ${{ inputs.query }}
+        preset_filter: ${{ inputs.preset_filter }}
+        name: ${{ inputs.name }}
+        size_limit: ${{ inputs.size_limit }}
+  returns: ${{ steps.search.result }}

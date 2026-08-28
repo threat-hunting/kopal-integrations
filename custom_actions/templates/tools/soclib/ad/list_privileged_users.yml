@@ -1,0 +1,30 @@
+type: action
+definition:
+  title: "AD: List privileged users"
+  description: >
+    List members of privileged Active Directory groups. By default uses Domain Admins,
+    Enterprise Admins, Schema Admins, and Administrators; override with groups (semicolon-separated).
+    recursive includes nested group members.
+  display_group: "SOCLib / Active Directory"
+  namespace: tools.soclib.ad
+  name: list_privileged_users
+  secrets:
+    - name: soclib_active_directory
+      keys: ["AD_URL", "AD_BIND_DN", "AD_BIND_PASSWORD", "AD_BASE_DN"]
+      optional_keys: ["AD_SECURE_CONNECTION", "AD_VALIDATE_SSL", "AD_AUTH_TYPE", "AD_TIMEOUT"]
+  expects:
+    groups:
+      type: str
+      description: "Privileged group names (semicolon-separated); null for default set."
+      default: null
+    recursive:
+      type: bool
+      description: "Include nested group members."
+      default: true
+  steps:
+    - ref: priv
+      action: integrations.soclib.ad.list_privileged_users
+      args:
+        groups: ${{ inputs.groups }}
+        recursive: ${{ inputs.recursive }}
+  returns: ${{ steps.priv.result }}

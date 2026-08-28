@@ -1,0 +1,56 @@
+type: action
+definition:
+  title: "Telegram: Send message to user"
+  description: >
+    Send a direct message to a Telegram user. User must have started the bot (/start) first.
+    chat_id must be a positive numeric user id.
+  display_group: "SOCLib / Telegram"
+  namespace: tools.soclib.telegram
+  name: send_message_to_user
+  doc_url: https://core.telegram.org/bots/api#sendmessage
+
+  secrets:
+    - name: soclib_telegram
+      keys: ["TELEGRAM_BOT_TOKEN"]
+      optional_keys:
+        - TELEGRAM_DEFAULT_CHAT_ID
+        - TELEGRAM_API_BASE_URL
+        - TELEGRAM_DEFAULT_PARSE_MODE
+
+  expects:
+    text:
+      type: str
+      description: DM text to send.
+    chat_id:
+      type: str | None
+      description: User chat id (positive integer). Uses secret default if omitted.
+      default: null
+    parse_mode:
+      type: str | None
+      description: Parse mode.
+      default: null
+    disable_notification:
+      type: bool | None
+      description: Send silently when true.
+      default: null
+    protect_content:
+      type: bool | None
+      description: Prevent forwarding/saving when true.
+      default: null
+    reply_to_message_id:
+      type: int | None
+      description: Reply to an existing message id.
+      default: null
+
+  steps:
+    - ref: send
+      action: integrations.soclib.telegram.send_message_to_user
+      args:
+        text: ${{ inputs.text }}
+        chat_id: ${{ inputs.chat_id }}
+        parse_mode: ${{ inputs.parse_mode }}
+        disable_notification: ${{ inputs.disable_notification }}
+        protect_content: ${{ inputs.protect_content }}
+        reply_to_message_id: ${{ inputs.reply_to_message_id }}
+
+  returns: ${{ steps.send.result }}

@@ -1,0 +1,49 @@
+type: action
+definition:
+  title: "Splunk ES: Run query"
+  description: >
+    Execute a Splunk SPL (Search Processing Language) query and return results.
+    Supports time range, search mode (fast/verbose/smart), and result limiting.
+    Use this to search events, run saved searches, or execute any SPL query.
+  display_group: "SOCLib / Splunk Enterprise Security"
+  namespace: tools.soclib.splunkes
+  name: run_query
+  doc_url: https://docs.splunk.com/Documentation/Splunk/latest/RESTREF/RESTsearch#search.2Fjobs
+
+  secrets:
+    - name: soclib_splunk_es
+      keys: ["SPLUNK_BASE_URL", "SPLUNK_API_TOKEN"]
+      optional_keys: ["SPLUNK_VERIFY_SSL", "SPLUNK_NAMESPACE_OWNER", "SPLUNK_NAMESPACE_APP"]
+
+  expects:
+    query:
+      type: str
+      description: Splunk SPL query. Must start with 'search' or a command like '|'.
+    start_time:
+      type: str | None
+      description: Earliest time modifier (e.g., '-24h', '-7d', '2024-01-01T00:00:00Z').
+      default: null
+    end_time:
+      type: str | None
+      description: Latest time modifier (e.g., 'now', '-1h', '2024-01-02T00:00:00Z').
+      default: null
+    limit:
+      type: int
+      description: Maximum number of results to return.
+      default: 100
+    search_mode:
+      type: str
+      description: "Search mode: 'fast', 'verbose', or 'smart'."
+      default: smart
+
+  steps:
+    - ref: run
+      action: integrations.soclib.splunkes.run_query
+      args:
+        query: ${{ inputs.query }}
+        start_time: ${{ inputs.start_time }}
+        end_time: ${{ inputs.end_time }}
+        limit: ${{ inputs.limit }}
+        search_mode: ${{ inputs.search_mode }}
+
+  returns: ${{ steps.run.result }}

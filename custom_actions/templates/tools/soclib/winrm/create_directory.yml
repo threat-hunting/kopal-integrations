@@ -1,0 +1,33 @@
+type: action
+definition:
+  title: "WinRM: Create directory"
+  description: Create a directory on the target. Uses soclib_winrm secret.
+  display_group: "SOCLib / Windows Remote Management"
+  namespace: tools.soclib.winrm
+  name: create_directory
+  secrets:
+    - name: soclib_winrm
+      keys: ["WINRM_ENDPOINT", "WINRM_USERNAME", "WINRM_PASSWORD", "WINRM_TRANSPORT"]
+      optional_keys:
+        - WINRM_PROTOCOL
+        - WINRM_PORT
+        - WINRM_DOMAIN
+        - WINRM_VERIFY_SSL
+        - WINRM_CERT_PEM
+        - WINRM_CERT_KEY_PEM
+        - WINRM_CA_TRUST
+  expects:
+    path:
+      type: str
+      description: "Full path of directory to create."
+    ip_hostname:
+      type: str | None
+      description: "Override target host."
+      default: null
+  steps:
+    - ref: create
+      action: integrations.soclib.winrm.create_directory
+      args:
+        path: ${{ inputs.path }}
+        ip_hostname: ${{ inputs.ip_hostname }}
+  returns: ${{ steps.create.result }}

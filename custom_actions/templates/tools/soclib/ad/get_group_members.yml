@@ -1,0 +1,39 @@
+type: action
+definition:
+  title: "AD: Get group members"
+  description: >
+    List direct (or recursive) members of an Active Directory group. Group can be
+    specified by name (CN), sAMAccountName, or full DN. Optionally request specific
+    attributes per member.
+  display_group: "SOCLib / Active Directory"
+  namespace: tools.soclib.ad
+  name: get_group_members
+  secrets:
+    - name: soclib_active_directory
+      keys: ["AD_URL", "AD_BIND_DN", "AD_BIND_PASSWORD", "AD_BASE_DN"]
+      optional_keys: ["AD_SECURE_CONNECTION", "AD_VALIDATE_SSL", "AD_AUTH_TYPE", "AD_TIMEOUT"]
+  expects:
+    group:
+      type: str
+      description: "Group name (CN), sAMAccountName, or DN."
+    identifier_type:
+      type: str
+      description: "How to resolve group: auto, samaccountname, or dn."
+      default: "auto"
+    recursive:
+      type: bool
+      description: "Include nested group members."
+      default: false
+    attributes:
+      type: str
+      description: "Attributes to return per member (semicolon-separated)."
+      default: "sAMAccountName;displayName;mail"
+  steps:
+    - ref: members
+      action: integrations.soclib.ad.get_group_members
+      args:
+        group: ${{ inputs.group }}
+        identifier_type: ${{ inputs.identifier_type }}
+        recursive: ${{ inputs.recursive }}
+        attributes: ${{ inputs.attributes }}
+  returns: ${{ steps.members.result }}

@@ -1,0 +1,28 @@
+type: action
+definition:
+  title: "AD: Enable account"
+  description: >
+    Enable a disabled Active Directory account so the user can log on again. User can
+    be sAMAccountName or distinguishedName; set use_samaccountname true for sAMAccountName.
+  display_group: "SOCLib / Active Directory"
+  namespace: tools.soclib.ad
+  name: enable_account
+  secrets:
+    - name: soclib_active_directory
+      keys: ["AD_URL", "AD_BIND_DN", "AD_BIND_PASSWORD", "AD_BASE_DN"]
+      optional_keys: ["AD_SECURE_CONNECTION", "AD_VALIDATE_SSL", "AD_AUTH_TYPE", "AD_TIMEOUT"]
+  expects:
+    user:
+      type: str
+      description: "User sAMAccountName or distinguishedName."
+    use_samaccountname:
+      type: bool
+      description: "True if user is sAMAccountName."
+      default: false
+  steps:
+    - ref: enable
+      action: integrations.soclib.ad.enable_account
+      args:
+        user: ${{ inputs.user }}
+        use_samaccountname: ${{ inputs.use_samaccountname }}
+  returns: ${{ steps.enable.result }}

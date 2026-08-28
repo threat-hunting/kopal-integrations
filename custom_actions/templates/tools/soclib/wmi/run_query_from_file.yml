@@ -1,0 +1,30 @@
+type: action
+definition:
+  title: "WMI: Run query from file"
+  description: Run WQL query loaded from a URL (http/https). File must contain a single SELECT query.
+  display_group: "SOCLib / WMI"
+  namespace: tools.soclib.wmi
+  name: run_query_from_file
+  secrets:
+    - name: soclib_wmi
+      keys: ["WMI_SERVER", "WMI_USERNAME", "WMI_PASSWORD"]
+      optional_keys:
+        - WMI_FORCE_NTLMV2
+        - WMI_NAMESPACE
+        - WMI_DOMAIN
+  expects:
+    query_file:
+      type: str
+      description: "URL of the file containing WQL query (http or https). Example: https://raw.githubusercontent.com/org/repo/main/queries/processes.wql."
+    ip_hostname: { type: str | None, description: "Optional. Target host.", default: null }
+    namespace: { type: str | None, description: "Optional. WMI namespace. Default root/cimv2.", default: null }
+    query_file_encoding: { type: str, description: "Encoding of the file. Default utf-8.", default: "utf-8" }
+  steps:
+    - ref: run
+      action: integrations.soclib.wmi.run_query_from_file
+      args:
+        query_file: ${{ inputs.query_file }}
+        ip_hostname: ${{ inputs.ip_hostname }}
+        namespace: ${{ inputs.namespace }}
+        query_file_encoding: ${{ inputs.query_file_encoding }}
+  returns: ${{ steps.run.result }}

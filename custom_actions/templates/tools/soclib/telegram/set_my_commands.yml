@@ -1,0 +1,40 @@
+type: action
+definition:
+  title: "Telegram: Set my commands"
+  description: >
+    Two-letter ISO 639-1 language code.
+  display_group: "SOCLib / Telegram"
+  namespace: tools.soclib.telegram
+  name: set_my_commands
+
+  secrets:
+    - name: soclib_telegram
+      keys: ["TELEGRAM_BOT_TOKEN"]
+      optional_keys:
+        - TELEGRAM_DEFAULT_CHAT_ID
+        - TELEGRAM_API_BASE_URL
+        - TELEGRAM_DEFAULT_PARSE_MODE
+        - TELEGRAM_WEBHOOK_SECRET
+
+  expects:
+    commands_json:
+      type: str
+      description: JSON array of BotCommand objects, e.g. [{"command":"help","description":"Show help"}].
+    scope_json:
+      type: str | None
+      description: Optional JSON BotCommandScope object..
+      default: null
+    language_code:
+      type: str | None
+      description: Two-letter ISO 639-1 language code..
+      default: null
+
+  steps:
+    - ref: run
+      action: integrations.soclib.telegram.set_my_commands
+      args:
+        commands_json: ${{ inputs.commands_json }}
+        scope_json: ${{ inputs.scope_json }}
+        language_code: ${{ inputs.language_code }}
+
+  returns: ${{ steps.run.result }}

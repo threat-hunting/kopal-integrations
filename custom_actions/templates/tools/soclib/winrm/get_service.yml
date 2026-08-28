@@ -1,0 +1,33 @@
+type: action
+definition:
+  title: "WinRM: Get service"
+  description: Get details of a single Windows service. Uses soclib_winrm secret.
+  display_group: "SOCLib / Windows Remote Management"
+  namespace: tools.soclib.winrm
+  name: get_service
+  secrets:
+    - name: soclib_winrm
+      keys: ["WINRM_ENDPOINT", "WINRM_USERNAME", "WINRM_PASSWORD", "WINRM_TRANSPORT"]
+      optional_keys:
+        - WINRM_PROTOCOL
+        - WINRM_PORT
+        - WINRM_DOMAIN
+        - WINRM_VERIFY_SSL
+        - WINRM_CERT_PEM
+        - WINRM_CERT_KEY_PEM
+        - WINRM_CA_TRUST
+  expects:
+    service_name:
+      type: str
+      description: "Name of the service."
+    ip_hostname:
+      type: str | None
+      description: "Override target host."
+      default: null
+  steps:
+    - ref: get
+      action: integrations.soclib.winrm.get_service
+      args:
+        service_name: ${{ inputs.service_name }}
+        ip_hostname: ${{ inputs.ip_hostname }}
+  returns: ${{ steps.get.result }}

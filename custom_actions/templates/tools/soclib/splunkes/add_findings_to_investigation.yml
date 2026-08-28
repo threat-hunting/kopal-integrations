@@ -1,0 +1,38 @@
+type: action
+definition:
+  title: "Splunk ES: Add findings to investigation"
+  description: >
+    Add findings to an investigation in Splunk ES.
+    Requires investigation_id and finding_ids list. Optionally includes finding_times.
+    Returns the updated investigation with investigation_guid.
+  display_group: "SOCLib / Splunk Enterprise Security"
+  namespace: tools.soclib.splunkes
+  name: add_findings_to_investigation
+  doc_url: https://help.splunk.com/en/splunk-enterprise-security-8/api-reference/8.4/splunk-enterprise-security-api-reference/investigation/public_v2_add_findings_to_investigation
+
+  secrets:
+    - name: soclib_splunk_es
+      keys: ["SPLUNK_BASE_URL", "SPLUNK_API_TOKEN"]
+      optional_keys: ["SPLUNK_VERIFY_SSL", "SPLUNK_NAMESPACE_OWNER", "SPLUNK_NAMESPACE_APP"]
+
+  expects:
+    investigation_id:
+      type: str
+      description: Investigation ID (GUID) or display_id.
+    finding_ids:
+      type: list[str]
+      description: List of finding IDs (event_ids) to add (required).
+    finding_times:
+      type: list[str] | None
+      description: List of times for findings (relative, ISO, or epoch time). Must match finding_ids length.
+      default: null
+
+  steps:
+    - ref: add
+      action: integrations.soclib.splunkes.add_findings_to_investigation
+      args:
+        investigation_id: ${{ inputs.investigation_id }}
+        finding_ids: ${{ inputs.finding_ids }}
+        finding_times: ${{ inputs.finding_times }}
+
+  returns: ${{ steps.add.result }}

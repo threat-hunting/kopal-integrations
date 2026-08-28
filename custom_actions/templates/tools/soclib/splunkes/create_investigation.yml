@@ -1,0 +1,79 @@
+type: action
+definition:
+  title: "Splunk ES: Create investigation"
+  description: >
+    Create a new investigation in Splunk ES.
+    Requires name; optionally includes description, investigation_type, status, disposition, urgency, sensitivity, owner, and finding information.
+    Returns the created investigation with investigation_id and investigation_guid.
+  display_group: "SOCLib / Splunk Enterprise Security"
+  namespace: tools.soclib.splunkes
+  name: create_investigation
+  doc_url: https://help.splunk.com/en/splunk-enterprise-security-8/api-reference/8.4/splunk-enterprise-security-api-reference/investigation/public_v2_create_investigation
+
+  secrets:
+    - name: soclib_splunk_es
+      keys: ["SPLUNK_BASE_URL", "SPLUNK_API_TOKEN"]
+      optional_keys: ["SPLUNK_VERIFY_SSL", "SPLUNK_NAMESPACE_OWNER", "SPLUNK_NAMESPACE_APP"]
+
+  expects:
+    name:
+      type: str
+      description: Investigation name (required).
+    description:
+      type: str | None
+      description: Investigation description.
+      default: null
+    investigation_type:
+      type: str | None
+      description: Investigation type (e.g., 'threat investigation', 'default').
+      default: null
+    status:
+      type: str | None
+      description: Status ID or status label (e.g., 'New', '1').
+      default: null
+    disposition:
+      type: str | None
+      description: Disposition ID or disposition label (e.g., 'Undetermined').
+      default: null
+    urgency:
+      type: str | None
+      description: "Urgency: 'informational', 'low', 'medium', 'high', 'critical', 'unknown'."
+      default: null
+    sensitivity:
+      type: str | None
+      description: "Sensitivity: 'White', 'Green', 'Amber', 'Red', 'Unassigned'."
+      default: null
+    owner:
+      type: str | None
+      description: Owner username.
+      default: null
+    finding_id:
+      type: str | None
+      description: Associated finding ID (single).
+      default: null
+    finding_ids:
+      type: list[str] | None
+      description: List of finding IDs (event_ids) to add to investigation.
+      default: null
+    finding_times:
+      type: list[str] | None
+      description: List of times for findings (relative, ISO, or epoch time).
+      default: null
+
+  steps:
+    - ref: create
+      action: integrations.soclib.splunkes.create_investigation
+      args:
+        name: ${{ inputs.name }}
+        description: ${{ inputs.description }}
+        investigation_type: ${{ inputs.investigation_type }}
+        status: ${{ inputs.status }}
+        disposition: ${{ inputs.disposition }}
+        urgency: ${{ inputs.urgency }}
+        sensitivity: ${{ inputs.sensitivity }}
+        owner: ${{ inputs.owner }}
+        finding_id: ${{ inputs.finding_id }}
+        finding_ids: ${{ inputs.finding_ids }}
+        finding_times: ${{ inputs.finding_times }}
+
+  returns: ${{ steps.create.result }}

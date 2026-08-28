@@ -1,0 +1,94 @@
+type: action
+definition:
+  title: "Telegram: Send poll"
+  description: >
+    Prevent forwarding/saving when true.
+  display_group: "SOCLib / Telegram"
+  namespace: tools.soclib.telegram
+  name: send_poll
+
+  secrets:
+    - name: soclib_telegram
+      keys: ["TELEGRAM_BOT_TOKEN"]
+      optional_keys:
+        - TELEGRAM_DEFAULT_CHAT_ID
+        - TELEGRAM_API_BASE_URL
+        - TELEGRAM_DEFAULT_PARSE_MODE
+        - TELEGRAM_WEBHOOK_SECRET
+
+  expects:
+    question:
+      type: str
+      description: Poll question (1–300 characters)..
+    options:
+      type: str
+      description: Poll options as JSON array or comma-separated list (2–10 items)..
+    chat_id:
+      type: str | None
+      description: Target chat. Uses secret default if omitted..
+      default: null
+    is_anonymous:
+      type: bool | None
+      description: Anonymous poll when true (default)..
+      default: null
+    poll_type:
+      type: str | None
+      description: "Poll type: quiz or regular (default regular).."
+      default: null
+    allows_multiple_answers:
+      type: bool | None
+      description: Allow multiple answers when true..
+      default: null
+    correct_option_id:
+      type: int | None
+      description: Correct option index for quiz polls..
+      default: null
+    explanation:
+      type: str | None
+      description: Quiz explanation shown after close..
+      default: null
+    explanation_parse_mode:
+      type: str | None
+      description: Parse mode for explanation..
+      default: null
+    open_period:
+      type: int | None
+      description: Poll auto-close period in seconds (5–600)..
+      default: null
+    close_date:
+      type: int | None
+      description: Unix timestamp when poll closes..
+      default: null
+    disable_notification:
+      type: bool | None
+      description: Send silently when true..
+      default: null
+    message_thread_id:
+      type: int | None
+      description: Forum topic thread id..
+      default: null
+    protect_content:
+      type: bool | None
+      description: Prevent forwarding/saving when true..
+      default: null
+
+  steps:
+    - ref: run
+      action: integrations.soclib.telegram.send_poll
+      args:
+        question: ${{ inputs.question }}
+        options: ${{ inputs.options }}
+        chat_id: ${{ inputs.chat_id }}
+        is_anonymous: ${{ inputs.is_anonymous }}
+        poll_type: ${{ inputs.poll_type }}
+        allows_multiple_answers: ${{ inputs.allows_multiple_answers }}
+        correct_option_id: ${{ inputs.correct_option_id }}
+        explanation: ${{ inputs.explanation }}
+        explanation_parse_mode: ${{ inputs.explanation_parse_mode }}
+        open_period: ${{ inputs.open_period }}
+        close_date: ${{ inputs.close_date }}
+        disable_notification: ${{ inputs.disable_notification }}
+        message_thread_id: ${{ inputs.message_thread_id }}
+        protect_content: ${{ inputs.protect_content }}
+
+  returns: ${{ steps.run.result }}

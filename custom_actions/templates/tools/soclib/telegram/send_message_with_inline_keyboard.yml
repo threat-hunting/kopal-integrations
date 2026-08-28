@@ -1,0 +1,69 @@
+type: action
+definition:
+  title: "Telegram: Send message with inline keyboard"
+  description: >
+    Prevent forwarding/saving when true.
+  display_group: "SOCLib / Telegram"
+  namespace: tools.soclib.telegram
+  name: send_message_with_inline_keyboard
+
+  secrets:
+    - name: soclib_telegram
+      keys: ["TELEGRAM_BOT_TOKEN"]
+      optional_keys:
+        - TELEGRAM_DEFAULT_CHAT_ID
+        - TELEGRAM_API_BASE_URL
+        - TELEGRAM_DEFAULT_PARSE_MODE
+        - TELEGRAM_WEBHOOK_SECRET
+
+  expects:
+    text:
+      type: str
+      description: Message text (1–4096 characters)..
+    inline_keyboard_json:
+      type: str
+      description: "JSON array of button rows or full InlineKeyboardMarkup. Example: [[{\"text\":\"Approve\",\"callback_data\":\"approve\"}]]."
+    chat_id:
+      type: str | None
+      description: Target chat. Uses secret default if omitted..
+      default: null
+    parse_mode:
+      type: str | None
+      description: HTML, MarkdownV2, or Markdown..
+      default: null
+    disable_notification:
+      type: bool | None
+      description: Send silently when true..
+      default: null
+    disable_web_page_preview:
+      type: bool | None
+      description: Disable link preview..
+      default: null
+    reply_to_message_id:
+      type: int | None
+      description: Reply to an existing message id..
+      default: null
+    message_thread_id:
+      type: int | None
+      description: Forum topic thread id..
+      default: null
+    protect_content:
+      type: bool | None
+      description: Prevent forwarding/saving when true..
+      default: null
+
+  steps:
+    - ref: run
+      action: integrations.soclib.telegram.send_message_with_inline_keyboard
+      args:
+        text: ${{ inputs.text }}
+        inline_keyboard_json: ${{ inputs.inline_keyboard_json }}
+        chat_id: ${{ inputs.chat_id }}
+        parse_mode: ${{ inputs.parse_mode }}
+        disable_notification: ${{ inputs.disable_notification }}
+        disable_web_page_preview: ${{ inputs.disable_web_page_preview }}
+        reply_to_message_id: ${{ inputs.reply_to_message_id }}
+        message_thread_id: ${{ inputs.message_thread_id }}
+        protect_content: ${{ inputs.protect_content }}
+
+  returns: ${{ steps.run.result }}

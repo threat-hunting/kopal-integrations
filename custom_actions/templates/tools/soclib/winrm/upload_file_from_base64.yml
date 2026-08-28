@@ -1,0 +1,23 @@
+type: action
+definition:
+  title: "WinRM: Upload file (base64)"
+  description: Upload a file to the target from base64 content. Uses soclib_winrm secret.
+  display_group: "SOCLib / Windows Remote Management"
+  namespace: tools.soclib.winrm
+  name: upload_file_from_base64
+  secrets:
+    - name: soclib_winrm
+      keys: ["WINRM_ENDPOINT", "WINRM_USERNAME", "WINRM_PASSWORD", "WINRM_TRANSPORT"]
+      optional_keys: ["WINRM_PROTOCOL", "WINRM_PORT", "WINRM_DOMAIN", "WINRM_VERIFY_SSL", "WINRM_CERT_PEM", "WINRM_CERT_KEY_PEM", "WINRM_CA_TRUST"]
+  expects:
+    destination: { type: str }
+    content_base64: { type: str }
+    ip_hostname: { type: str | None, default: null }
+  steps:
+    - ref: upload
+      action: integrations.soclib.winrm.upload_file_from_base64
+      args:
+        destination: ${{ inputs.destination }}
+        content_base64: ${{ inputs.content_base64 }}
+        ip_hostname: ${{ inputs.ip_hostname }}
+  returns: ${{ steps.upload.result }}

@@ -1,0 +1,31 @@
+type: action
+definition:
+  title: "Telegram: Leave chat"
+  description: >
+    Chat to leave. Uses secret default if omitted.
+  display_group: "SOCLib / Telegram"
+  namespace: tools.soclib.telegram
+  name: leave_chat
+
+  secrets:
+    - name: soclib_telegram
+      keys: ["TELEGRAM_BOT_TOKEN"]
+      optional_keys:
+        - TELEGRAM_DEFAULT_CHAT_ID
+        - TELEGRAM_API_BASE_URL
+        - TELEGRAM_DEFAULT_PARSE_MODE
+        - TELEGRAM_WEBHOOK_SECRET
+
+  expects:
+    chat_id:
+      type: str | None
+      description: Chat to leave. Uses secret default if omitted..
+      default: null
+
+  steps:
+    - ref: run
+      action: integrations.soclib.telegram.leave_chat
+      args:
+        chat_id: ${{ inputs.chat_id }}
+
+  returns: ${{ steps.run.result }}

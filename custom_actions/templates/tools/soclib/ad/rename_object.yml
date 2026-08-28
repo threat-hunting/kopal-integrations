@@ -1,0 +1,32 @@
+type: action
+definition:
+  title: "AD: Rename object"
+  description: >
+    Rename an Active Directory object. Provide the object by sAMAccountName or DN and
+    the new RDN (e.g. cn=NewName). use_samaccountname true when object is sAMAccountName.
+  display_group: "SOCLib / Active Directory"
+  namespace: tools.soclib.ad
+  name: rename_object
+  secrets:
+    - name: soclib_active_directory
+      keys: ["AD_URL", "AD_BIND_DN", "AD_BIND_PASSWORD", "AD_BASE_DN"]
+      optional_keys: ["AD_SECURE_CONNECTION", "AD_VALIDATE_SSL", "AD_AUTH_TYPE", "AD_TIMEOUT"]
+  expects:
+    object:
+      type: str
+      description: "Object sAMAccountName or distinguishedName."
+    new_name:
+      type: str
+      description: "New RDN (e.g. cn=NewUserName)."
+    use_samaccountname:
+      type: bool
+      description: "True if object is sAMAccountName."
+      default: false
+  steps:
+    - ref: rename
+      action: integrations.soclib.ad.rename_object
+      args:
+        object: ${{ inputs.object }}
+        new_name: ${{ inputs.new_name }}
+        use_samaccountname: ${{ inputs.use_samaccountname }}
+  returns: ${{ steps.rename.result }}

@@ -1,0 +1,32 @@
+type: action
+definition:
+  title: "WinRM: List services"
+  description: List Windows services with name, display name, status, and start type. Uses soclib_winrm secret.
+  display_group: "SOCLib / Windows Remote Management"
+  namespace: tools.soclib.winrm
+  name: list_services
+  secrets:
+    - name: soclib_winrm
+      keys: ["WINRM_ENDPOINT", "WINRM_USERNAME", "WINRM_PASSWORD", "WINRM_TRANSPORT"]
+      optional_keys:
+        - WINRM_PROTOCOL
+        - WINRM_PORT
+        - WINRM_DOMAIN
+        - WINRM_VERIFY_SSL
+        - WINRM_CERT_PEM
+        - WINRM_CERT_KEY_PEM
+        - WINRM_CA_TRUST
+  expects:
+    ip_hostname: { type: str | None, description: "Override target host.", default: null }
+    max_count: { type: int | None, description: "Max number of services to return.", default: null }
+    status_filter: { type: str | None, description: "Filter by status (e.g. Running, Stopped).", default: null }
+    start_type_filter: { type: str | None, description: "Filter by start type (Automatic, Manual, Disabled).", default: null }
+  steps:
+    - ref: list
+      action: integrations.soclib.winrm.list_services
+      args:
+        ip_hostname: ${{ inputs.ip_hostname }}
+        max_count: ${{ inputs.max_count }}
+        status_filter: ${{ inputs.status_filter }}
+        start_type_filter: ${{ inputs.start_type_filter }}
+  returns: ${{ steps.list.result }}

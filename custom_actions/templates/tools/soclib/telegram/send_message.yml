@@ -1,0 +1,76 @@
+type: action
+definition:
+  title: "Telegram: Send message"
+  description: >
+    Send a text message to a Telegram user, group, supergroup, or channel.
+    chat_id can be numeric id or @channelusername; falls back to secret default.
+  display_group: "SOCLib / Telegram"
+  namespace: tools.soclib.telegram
+  name: send_message
+  doc_url: https://core.telegram.org/bots/api#sendmessage
+
+  secrets:
+    - name: soclib_telegram
+      keys: ["TELEGRAM_BOT_TOKEN"]
+      optional_keys:
+        - TELEGRAM_DEFAULT_CHAT_ID
+        - TELEGRAM_API_BASE_URL
+        - TELEGRAM_DEFAULT_PARSE_MODE
+
+  expects:
+    text:
+      type: str
+      description: Message text (1–4096 characters).
+    chat_id:
+      type: str | None
+      description: Target chat_id or @channelusername. Uses TELEGRAM_DEFAULT_CHAT_ID if omitted.
+      default: null
+    parse_mode:
+      type: str | None
+      description: HTML, MarkdownV2, or Markdown.
+      default: null
+    disable_notification:
+      type: bool | None
+      description: Send silently when true.
+      default: null
+    disable_web_page_preview:
+      type: bool | None
+      description: Disable link preview when true.
+      default: null
+    reply_to_message_id:
+      type: int | None
+      description: Reply to an existing message id.
+      default: null
+    reply_markup:
+      type: str | None
+      description: JSON InlineKeyboardMarkup for inline buttons.
+      default: null
+    message_thread_id:
+      type: int | None
+      description: Forum topic thread id (supergroups with topics).
+      default: null
+    protect_content:
+      type: bool | None
+      description: Prevent forwarding/saving when true.
+      default: null
+    allow_sending_without_reply:
+      type: bool | None
+      description: Send even if replied-to message is missing.
+      default: null
+
+  steps:
+    - ref: send
+      action: integrations.soclib.telegram.send_message
+      args:
+        text: ${{ inputs.text }}
+        chat_id: ${{ inputs.chat_id }}
+        parse_mode: ${{ inputs.parse_mode }}
+        disable_notification: ${{ inputs.disable_notification }}
+        disable_web_page_preview: ${{ inputs.disable_web_page_preview }}
+        reply_to_message_id: ${{ inputs.reply_to_message_id }}
+        reply_markup: ${{ inputs.reply_markup }}
+        message_thread_id: ${{ inputs.message_thread_id }}
+        protect_content: ${{ inputs.protect_content }}
+        allow_sending_without_reply: ${{ inputs.allow_sending_without_reply }}
+
+  returns: ${{ steps.send.result }}

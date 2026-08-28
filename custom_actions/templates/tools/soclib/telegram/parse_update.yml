@@ -1,0 +1,30 @@
+type: action
+definition:
+  title: "Telegram: Parse update"
+  description: >
+    Raw Telegram Update object as JSON string.
+  display_group: "SOCLib / Telegram"
+  namespace: tools.soclib.telegram
+  name: parse_update
+
+  secrets:
+    - name: soclib_telegram
+      keys: ["TELEGRAM_BOT_TOKEN"]
+      optional_keys:
+        - TELEGRAM_DEFAULT_CHAT_ID
+        - TELEGRAM_API_BASE_URL
+        - TELEGRAM_DEFAULT_PARSE_MODE
+        - TELEGRAM_WEBHOOK_SECRET
+
+  expects:
+    update_json:
+      type: str
+      description: Raw Telegram Update object as JSON string..
+
+  steps:
+    - ref: run
+      action: integrations.soclib.telegram.parse_update
+      args:
+        update_json: ${{ inputs.update_json }}
+
+  returns: ${{ steps.run.result }}

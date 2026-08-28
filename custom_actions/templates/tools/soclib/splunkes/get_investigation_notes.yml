@@ -1,0 +1,39 @@
+type: action
+definition:
+  title: "Splunk ES: Get investigation notes"
+  description: >
+    Retrieve notes for a specific investigation from Splunk ES.
+    Supports searching notes by keywords and filtering by source type (Task, Incident, or All).
+    Returns a list of notes associated with the investigation.
+  display_group: "SOCLib / Splunk Enterprise Security"
+  namespace: tools.soclib.splunkes
+  name: get_investigation_notes
+  doc_url: https://help.splunk.com/en/splunk-enterprise-security-8/api-reference/8.4/splunk-enterprise-security-api-reference/investigation/public_v2_get_notes_from_investigation
+
+  secrets:
+    - name: soclib_splunk_es
+      keys: ["SPLUNK_BASE_URL", "SPLUNK_API_TOKEN"]
+      optional_keys: ["SPLUNK_VERIFY_SSL", "SPLUNK_NAMESPACE_OWNER", "SPLUNK_NAMESPACE_APP"]
+
+  expects:
+    investigation_id:
+      type: str
+      description: Investigation ID (GUID) or display_id.
+    search:
+      type: str | None
+      description: Keywords to search for in the title or content of notes.
+      default: null
+    source_type:
+      type: str | None
+      description: "Source type filter: 'Task', 'Incident', or 'All'. Only notes of this type will be returned."
+      default: null
+
+  steps:
+    - ref: get
+      action: integrations.soclib.splunkes.get_investigation_notes
+      args:
+        investigation_id: ${{ inputs.investigation_id }}
+        search: ${{ inputs.search }}
+        source_type: ${{ inputs.source_type }}
+
+  returns: ${{ steps.get.result }}

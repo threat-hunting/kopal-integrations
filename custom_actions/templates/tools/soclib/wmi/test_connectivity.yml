@@ -1,0 +1,32 @@
+type: action
+definition:
+  title: "WMI: Test connectivity"
+  description: >
+    Validate WMI connection to the target by running a simple WQL query (Win32_ComputerSystem).
+    Uses soclib_wmi secret. No dependency on WinRM.
+  display_group: "SOCLib / WMI"
+  namespace: tools.soclib.wmi
+  name: test_connectivity
+  secrets:
+    - name: soclib_wmi
+      keys: ["WMI_SERVER", "WMI_USERNAME", "WMI_PASSWORD"]
+      optional_keys:
+        - WMI_FORCE_NTLMV2
+        - WMI_NAMESPACE
+        - WMI_DOMAIN
+  expects:
+    ip_hostname:
+      type: str | None
+      description: "Optional. Target host or IP. Overrides WMI_SERVER. Example: 192.168.1.10."
+      default: null
+    namespace:
+      type: str | None
+      description: "Optional. WMI namespace. Default root/cimv2. Example: root/cimv2."
+      default: null
+  steps:
+    - ref: test
+      action: integrations.soclib.wmi.test_connectivity
+      args:
+        ip_hostname: ${{ inputs.ip_hostname }}
+        namespace: ${{ inputs.namespace }}
+  returns: ${{ steps.test.result }}
